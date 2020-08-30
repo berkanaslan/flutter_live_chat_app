@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/locator.dart';
 import 'package:flutter_live_chat_app/services/auth_base.dart';
+import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
 
 class HomePage extends StatelessWidget {
-  final AuthBase authBase;
   final VoidCallback onSignOut;
+  AuthBase authBase = locator<FirebaseAuthService>();
 
-
-  const HomePage({Key key, @required this.onSignOut, this.authBase})
-      : super(key: key);
+  HomePage({Key key, @required this.onSignOut}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
