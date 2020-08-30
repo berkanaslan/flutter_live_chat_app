@@ -40,7 +40,9 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.berkanaslan.flutter_live_chat_app"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 30
+        ndkVersion "21.3.6528147"
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
