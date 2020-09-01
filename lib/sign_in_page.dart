@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
-import 'package:flutter_live_chat_app/locator.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
-import 'package:flutter_live_chat_app/services/auth_base.dart';
-import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
+import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
-  final Function(UserModel) onSignIn;
-  AuthBase authBase = locator<FirebaseAuthService>();
-
-  SignInPage({Key key, this.onSignIn}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +47,7 @@ class SignInPage extends StatelessWidget {
                 size: 32,
                 color: Colors.white,
               ),
-              onPressed: _signInAnonymously,
+              onPressed: () => _signInAnonymously(context),
             ),
           ],
         ),
@@ -61,9 +55,9 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  void _signInAnonymously() async {
-    UserModel _userModel = await authBase.signInAnonymously();
-    onSignIn(_userModel);
+  void _signInAnonymously(BuildContext context) async {
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    UserModel _userModel = await _userViewModel.signInAnonymously();
     print("Giriş yapan misafir: " + _userModel.userID.toString());
   }
 }

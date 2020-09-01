@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/landing_page.dart';
 import 'package:flutter_live_chat_app/locator.dart';
+import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: LandingPage(),
+      home: ChangeNotifierProvider(
+          create: (context) => UserViewModel(), child: LandingPage()),
     );
   }
 }

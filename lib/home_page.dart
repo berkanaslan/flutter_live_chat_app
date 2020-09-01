@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_live_chat_app/locator.dart';
-import 'package:flutter_live_chat_app/services/auth_base.dart';
-import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
+import 'package:flutter_live_chat_app/models/user_model.dart';
+import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  final VoidCallback onSignOut;
-  AuthBase authBase = locator<FirebaseAuthService>();
-
-  HomePage({Key key, @required this.onSignOut}) : super(key: key);
+  final UserModel userModel;
+  const HomePage({Key key, @required this.userModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,7 @@ class HomePage extends StatelessWidget {
         title: Text("Anasayfa"),
         actions: [
           FlatButton(
-            onPressed: _signOut,
+            onPressed: () => _signOut(context),
             child: Text(
               "Çıkış yap",
               style: TextStyle(color: Colors.white),
@@ -25,14 +23,14 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Text("Hoşgeldiniz: " + authBase.currentUser().userID),
+        child: Text("Hoşgeldiniz: " + userModel.userID.toString()),
       ),
     );
   }
 
-  Future<bool> _signOut() async {
-    bool result = await authBase.signOut();
-    onSignOut();
+  Future<bool> _signOut(BuildContext context) async {
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    bool result = await _userViewModel.signOut();
     return result;
   }
 }

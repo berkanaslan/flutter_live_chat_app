@@ -1,50 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/home_page.dart';
-import 'package:flutter_live_chat_app/locator.dart';
-import 'package:flutter_live_chat_app/models/user_model.dart';
-import 'package:flutter_live_chat_app/services/auth_base.dart';
-import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
 import 'package:flutter_live_chat_app/sign_in_page.dart';
+import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:provider/provider.dart';
 
-class LandingPage extends StatefulWidget {
-  @override
-  _LandingPageState createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
-  UserModel _user;
-  AuthBase authBase = locator<FirebaseAuthService>();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkUser();
-  }
-
+class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (_user == null) {
-      return SignInPage(
-        onSignIn: (user) {
-          _updateUser(user);
-        },
-      );
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
+
+    if (_userViewModel.state == ViewState.Idle) {
+      if (_userViewModel.currentUser() == null) {
+        return SignInPage();
+      } else {
+        return HomePage(
+          userModel: _userViewModel.userModel,
+        );
+      }
     } else {
-      return HomePage(
-        onSignOut: () {
-          _updateUser(null);
-        },
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
-  }
-
-  void _checkUser() {
-    _user = authBase.currentUser();
-  }
-
-  void _updateUser(UserModel user) {
-    setState(() {
-      _user = user;
-    });
   }
 }
