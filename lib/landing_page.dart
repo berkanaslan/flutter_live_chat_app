@@ -10,7 +10,7 @@ class LandingPage extends StatelessWidget {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
 
     if (_userViewModel.state == ViewState.Idle) {
-      if (_userViewModel.currentUser() == null) {
+      if (_userViewModel.userModel == null) {
         return SignInPage();
       } else {
         return HomePage(

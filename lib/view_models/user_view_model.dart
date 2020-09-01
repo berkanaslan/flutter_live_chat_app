@@ -26,7 +26,7 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   @override
   UserModel currentUser() {
     try {
-      _state = ViewState.Busy;
+      state = ViewState.Busy;
       _userModel = _userRepository.currentUser();
       if (_userModel != null) {
         return _userModel;
@@ -37,28 +37,28 @@ class UserViewModel with ChangeNotifier implements AuthBase {
       print("ViewModel currentUser() hatası: " + e.toString());
       return null;
     } finally {
-      _state = ViewState.Idle;
+      state = ViewState.Idle;
     }
   }
 
   @override
   Future<UserModel> signInAnonymously() async {
     try {
-      _state = ViewState.Busy;
+      state = ViewState.Busy;
       _userModel = await _userRepository.signInAnonymously();
       return _userModel;
     } catch (e) {
       print("ViewModel currentUser() hatası: " + e.toString());
       return null;
     } finally {
-      _state = ViewState.Idle;
+      state = ViewState.Idle;
     }
   }
 
   @override
   Future<bool> signOut() async {
     try {
-      _state = ViewState.Busy;
+      state = ViewState.Busy;
       bool result = await _userRepository.signOut();
       _userModel = null;
       return result;
@@ -66,7 +66,7 @@ class UserViewModel with ChangeNotifier implements AuthBase {
       print("ViewModel currentUser() hatası: " + e.toString());
       return false;
     } finally {
-      _state = ViewState.Idle;
+      state = ViewState.Idle;
     }
   }
 }

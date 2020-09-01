@@ -13,28 +13,40 @@ class UserRepository implements AuthBase {
 
   @override
   UserModel currentUser() {
-    if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.currentUser();
-    } else {
-      return _firebaseAuthService.currentUser();
+    try {
+      if (appMode == AppMode.DEBUG) {
+        return _fakeAuthService.currentUser();
+      } else {
+        return _firebaseAuthService.currentUser();
+      }
+    } catch (e) {
+      print("UserRepository currentUser() hatası: " + e.toString());
     }
   }
 
   @override
   Future<UserModel> signInAnonymously() async {
-    if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.signInAnonymously();
-    } else {
-      return _firebaseAuthService.signInAnonymously();
+    try {
+      if (appMode == AppMode.DEBUG) {
+        return _fakeAuthService.signInAnonymously();
+      } else {
+        return _firebaseAuthService.signInAnonymously();
+      }
+    } catch (e) {
+      print("UserRepository signInAnonymously() hatası: " + e.toString());
     }
   }
 
   @override
   Future<bool> signOut() {
-    if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.signOut();
-    } else {
-      return _firebaseAuthService.signOut();
+    try {
+      if (appMode == AppMode.DEBUG) {
+        return _fakeAuthService.signOut();
+      } else {
+        return _firebaseAuthService.signOut();
+      }
+    } catch (e) {
+      print("UserRepository signOut() hatası: " + e.toString());
     }
   }
 }
