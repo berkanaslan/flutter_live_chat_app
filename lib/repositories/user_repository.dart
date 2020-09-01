@@ -9,44 +9,41 @@ enum AppMode { DEBUG, RELEASE }
 class UserRepository implements AuthBase {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FakeAuthService _fakeAuthService = locator<FakeAuthService>();
-  AppMode appMode = AppMode.DEBUG;
+  AppMode appMode = AppMode.RELEASE;
 
   @override
   UserModel currentUser() {
-    try {
-      if (appMode == AppMode.DEBUG) {
-        return _fakeAuthService.currentUser();
-      } else {
-        return _firebaseAuthService.currentUser();
-      }
-    } catch (e) {
-      print("UserRepository currentUser() hatası: " + e.toString());
+    if (appMode == AppMode.DEBUG) {
+      return _fakeAuthService.currentUser();
+    } else {
+      return _firebaseAuthService.currentUser();
     }
   }
 
   @override
   Future<UserModel> signInAnonymously() async {
-    try {
-      if (appMode == AppMode.DEBUG) {
-        return _fakeAuthService.signInAnonymously();
-      } else {
-        return _firebaseAuthService.signInAnonymously();
-      }
-    } catch (e) {
-      print("UserRepository signInAnonymously() hatası: " + e.toString());
+    if (appMode == AppMode.DEBUG) {
+      return _fakeAuthService.signInAnonymously();
+    } else {
+      return _firebaseAuthService.signInAnonymously();
     }
   }
 
   @override
   Future<bool> signOut() {
-    try {
-      if (appMode == AppMode.DEBUG) {
-        return _fakeAuthService.signOut();
-      } else {
-        return _firebaseAuthService.signOut();
-      }
-    } catch (e) {
-      print("UserRepository signOut() hatası: " + e.toString());
+    if (appMode == AppMode.DEBUG) {
+      return _fakeAuthService.signOut();
+    } else {
+      return _firebaseAuthService.signOut();
+    }
+  }
+
+  @override
+  Future<UserModel> signInWithGoogle() async {
+    if (appMode == AppMode.DEBUG) {
+      return _fakeAuthService.signInWithGoogle();
+    } else {
+      return _firebaseAuthService.signInWithGoogle();
     }
   }
 }

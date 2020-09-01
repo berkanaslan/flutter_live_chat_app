@@ -28,7 +28,7 @@ class SignInPage extends StatelessWidget {
               buttonText: "Google ile oturum aç",
               buttonTextColor: Colors.black,
               buttonIcon: Image.asset("assets/images/google-logo.png"),
-              onPressed: () {},
+              onPressed: () => _signInWithGoogle(context),
             ),
             SocialLogInButton(
               buttonText: "E-Posta ile oturum aç",
@@ -58,6 +58,14 @@ class SignInPage extends StatelessWidget {
   void _signInAnonymously(BuildContext context) async {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     UserModel _userModel = await _userViewModel.signInAnonymously();
-    print("Giriş yapan misafir: " + _userModel.userID.toString());
+    if (_userModel != null)
+      print("Giriş yapan misafir: " + _userModel.userID.toString());
+  }
+
+  void _signInWithGoogle(BuildContext context) async {
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    UserModel _userModel = await _userViewModel.signInWithGoogle();
+    if (_userModel != null)
+      print("Google ile giriş yapan üye: " + _userModel.userID.toString());
   }
 }
