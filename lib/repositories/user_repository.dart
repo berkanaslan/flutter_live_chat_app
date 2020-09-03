@@ -3,12 +3,15 @@ import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/services/auth_base.dart';
 import 'package:flutter_live_chat_app/services/fake_auth_service.dart';
 import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
+import 'package:flutter_live_chat_app/services/firestore_db_service.dart';
 
 enum AppMode { DEBUG, RELEASE }
 
 class UserRepository implements AuthBase {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FakeAuthService _fakeAuthService = locator<FakeAuthService>();
+  FirestoreDBService _firestoreDBService = locator<FirestoreDBService>();
+
   AppMode appMode = AppMode.RELEASE;
 
   @override
@@ -43,7 +46,13 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInWithGoogle();
     } else {
-      return await _firebaseAuthService.signInWithGoogle();
+      UserModel _userModel = await _firebaseAuthService.signInWithGoogle();
+      bool _result = await _firestoreDBService.saveUser(_userModel);
+      if (_result) {
+        return _userModel;
+      } else {
+        return null;
+      }
     }
   }
 
@@ -52,7 +61,14 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.createWithMailAndPass(mail, pass);
     } else {
-      return await _firebaseAuthService.createWithMailAndPass(mail, pass);
+      UserModel _userModel =
+          await _firebaseAuthService.createWithMailAndPass(mail, pass);
+      bool _result = await _firestoreDBService.saveUser(_userModel);
+      if (_result) {
+        return _userModel;
+      } else {
+        return null;
+      }
     }
   }
 

@@ -80,7 +80,7 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                         errorText: _userViewModel.mailErrorMessage != null
                             ? _userViewModel.mailErrorMessage
                             : null,
-                        onSaved: (String inputMail) {""
+                        onSaved: (String inputMail) {
                           _mail = inputMail;
                         },
                       ),

@@ -33,6 +33,7 @@ dependencies:
   get_it: ^4.0.4
   provider: ^4.3.2+1
   google_sign_in: ^4.5.3
+  cloud_firestore: ^0.14.0+2
 
 dev_dependencies:
   flutter_test:
@@ -43,7 +44,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
+ 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -57,7 +58,7 @@ flutter:
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
   # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+  # https://flutter.dev/assets-and-images/#from-packa ges
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

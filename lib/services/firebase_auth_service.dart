@@ -10,7 +10,7 @@ class FirebaseAuthService implements AuthBase {
     if (user == null) {
       return null;
     } else {
-      return UserModel(userID: user.uid);
+      return UserModel(userID: user.uid, mail: user.email);
     }
   }
 
@@ -83,7 +83,8 @@ class FirebaseAuthService implements AuthBase {
           .createUserWithEmailAndPassword(email: mail, password: pass);
       return _userFromFirebase(userCredential.user);
     } catch (e) {
-      print("FirebaseAuthService createWithMailAndPass() hatası: " + e.toString());
+      print("FirebaseAuthService createWithMailAndPass() hatası: " +
+          e.toString());
       return null;
     }
   }
@@ -95,7 +96,8 @@ class FirebaseAuthService implements AuthBase {
           .signInWithEmailAndPassword(email: mail, password: pass);
       return _userFromFirebase(userCredential.user);
     } catch (e) {
-      print("FirebaseAuthService signInWithMailAndPass hatası: " + e.toString());
+      print(
+          "FirebaseAuthService signInWithMailAndPass hatası: " + e.toString());
       return null;
     }
   }
