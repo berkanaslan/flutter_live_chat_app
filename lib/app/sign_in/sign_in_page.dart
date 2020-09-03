@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/app/sign_in/mail_and_pass_form.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -37,7 +39,7 @@ class SignInPage extends StatelessWidget {
                 size: 32,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () => signInWithMailAndPass(context),
             ),
             SocialLogInButton(
               buttonBgColor: Color(0xFF334D92),
@@ -67,5 +69,14 @@ class SignInPage extends StatelessWidget {
     UserModel _userModel = await _userViewModel.signInWithGoogle();
     if (_userModel != null)
       print("Google ile giriş yapan üye: " + _userModel.userID.toString());
+  }
+
+  void signInWithMailAndPass(BuildContext context) async {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => MailAndPassForm(),
+      ),
+    );
   }
 }

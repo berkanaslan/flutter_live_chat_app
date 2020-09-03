@@ -5,4 +5,6 @@ abstract class AuthBase {
   Future<UserModel> signInAnonymously();
   Future<bool> signOut();
   Future<UserModel> signInWithGoogle();
+  Future<UserModel> signInWithMailAndPass(String mail, String pass);
+  Future<UserModel> createWithMailAndPass(String mail, String pass);
 }

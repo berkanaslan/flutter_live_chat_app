@@ -20,7 +20,7 @@ class FirebaseAuthService implements AuthBase {
       User user = _firebaseAuth.currentUser;
       return _userFromFirebase(user);
     } catch (e) {
-      print("Current user çağırılırken hata: " + e.toString());
+      print("FirebaseAuthService currentUser() hatası: " + e.toString());
       return null;
     }
   }
@@ -31,7 +31,7 @@ class FirebaseAuthService implements AuthBase {
       UserCredential userCredential = await _firebaseAuth.signInAnonymously();
       return _userFromFirebase(userCredential.user);
     } catch (e) {
-      print("Misafir olarak oturum açarken hata: " + e.toString());
+      print("FirebaseAuthService signInAnonymously hatası: " + e.toString());
       return null;
     }
   }
@@ -44,7 +44,7 @@ class FirebaseAuthService implements AuthBase {
       await _firebaseAuth.signOut();
       return true;
     } catch (e) {
-      print("Çıkış yaparken hata: " + e.toString());
+      print("FirebaseAuthService signOut() hatası: " + e.toString());
       return false;
     }
   }
@@ -54,7 +54,6 @@ class FirebaseAuthService implements AuthBase {
     try {
       GoogleSignIn _googleSignIn = GoogleSignIn();
       GoogleSignInAccount _googleUser = await _googleSignIn.signIn();
-
       if (_googleUser != null) {
         GoogleSignInAuthentication _googleAuth =
             await _googleUser.authentication;
@@ -72,7 +71,31 @@ class FirebaseAuthService implements AuthBase {
         return null;
       }
     } catch (e) {
-      print("Google ile giriş hatası: " + e.toString());
+      print("FirebaseAuthService signInWithGoogle() hatası: " + e.toString());
+      return null;
+    }
+  }
+
+  @override
+  Future<UserModel> createWithMailAndPass(String mail, String pass) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: mail, password: pass);
+      return _userFromFirebase(userCredential.user);
+    } catch (e) {
+      print("FirebaseAuthService createWithMailAndPass() hatası: " + e.toString());
+      return null;
+    }
+  }
+
+  @override
+  Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: mail, password: pass);
+      return _userFromFirebase(userCredential.user);
+    } catch (e) {
+      print("FirebaseAuthService signInWithMailAndPass hatası: " + e.toString());
       return null;
     }
   }

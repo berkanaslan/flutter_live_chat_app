@@ -26,4 +26,16 @@ class FakeAuthService implements AuthBase {
   Future<UserModel> signInWithGoogle() {
     return null;
   }
+
+  @override
+  Future<UserModel> createWithMailAndPass(String mail, String pass) {
+      // TODO: implement createWithMailAndPass
+      throw UnimplementedError();
+    }
+  
+    @override
+    Future<UserModel> signInWithMailAndPass(String mail, String pass) {
+    // TODO: implement signInWithMailAndPass
+    throw UnimplementedError();
+  }
 }

@@ -23,27 +23,45 @@ class UserRepository implements AuthBase {
   @override
   Future<UserModel> signInAnonymously() async {
     if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.signInAnonymously();
+      return await _fakeAuthService.signInAnonymously();
     } else {
-      return _firebaseAuthService.signInAnonymously();
+      return await _firebaseAuthService.signInAnonymously();
     }
   }
 
   @override
-  Future<bool> signOut() {
+  Future<bool> signOut() async {
     if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.signOut();
+      return await _fakeAuthService.signOut();
     } else {
-      return _firebaseAuthService.signOut();
+      return await _firebaseAuthService.signOut();
     }
   }
 
   @override
   Future<UserModel> signInWithGoogle() async {
     if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.signInWithGoogle();
+      return await _fakeAuthService.signInWithGoogle();
     } else {
-      return _firebaseAuthService.signInWithGoogle();
+      return await _firebaseAuthService.signInWithGoogle();
+    }
+  }
+
+  @override
+  Future<UserModel> createWithMailAndPass(String mail, String pass) async {
+    if (appMode == AppMode.DEBUG) {
+      return await _fakeAuthService.createWithMailAndPass(mail, pass);
+    } else {
+      return await _firebaseAuthService.createWithMailAndPass(mail, pass);
+    }
+  }
+
+  @override
+  Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
+    if (appMode == AppMode.DEBUG) {
+      return await _fakeAuthService.signInWithMailAndPass(mail, pass);
+    } else {
+      return await _firebaseAuthService.signInWithMailAndPass(mail, pass);
     }
   }
 }
