@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class SignInTextFormField extends StatelessWidget {
   final String labelText;
   final bool obscureText;
+  final String errorText;
   final Widget prefixIcon;
   final FormFieldValidator<String> validator;
   final FormFieldSetter<String> onSaved;
@@ -14,7 +15,7 @@ class SignInTextFormField extends StatelessWidget {
       @required this.prefixIcon,
       @required this.onSaved,
       this.validator,
-      this.keyboardType})
+      this.keyboardType, this.errorText})
       : super(key: key);
 
   @override
@@ -23,6 +24,7 @@ class SignInTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       decoration: InputDecoration(
+        errorText: errorText,
         prefixIcon: prefixIcon,
         labelText: labelText,
         labelStyle: TextStyle(

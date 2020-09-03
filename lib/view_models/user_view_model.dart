@@ -10,6 +10,8 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   ViewState _state = ViewState.Idle;
   UserRepository _userRepository = locator<UserRepository>();
   UserModel _userModel;
+  String mailErrorMessage;
+  String passErrorMessage;
 
   UserModel get userModel => _userModel;
   ViewState get state => _state;
@@ -87,9 +89,13 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   @override
   Future<UserModel> createWithMailAndPass(String mail, String pass) async {
     try {
-      state = ViewState.Busy;
-      _userModel = await _userRepository.createWithMailAndPass(mail, pass);
-      return _userModel;
+      if (_mailAndPassControl(mail, pass)) {
+        state = ViewState.Busy;
+        _userModel = await _userRepository.createWithMailAndPass(mail, pass);
+        return _userModel;
+      } else {
+        return null;
+      }
     } catch (e) {
       print("ViewModel createWithMailAndPass() hatası: " + e.toString());
       return null;
@@ -101,14 +107,37 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   @override
   Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
     try {
-      state = ViewState.Busy;
-      _userModel = await _userRepository.signInWithMailAndPass(mail, pass);
-      return _userModel;
+      if (_mailAndPassControl(mail, pass)) {
+        state = ViewState.Busy;
+        _userModel = await _userRepository.signInWithMailAndPass(mail, pass);
+        return _userModel;
+      } else {
+        return null;
+      }
     } catch (e) {
       print("ViewModel createWithMailAndPass() hatası: " + e.toString());
       return null;
     } finally {
       state = ViewState.Idle;
     }
+  }
+
+  bool _mailAndPassControl(String mail, String pass) {
+    var result = true;
+
+    if (pass.length < 6) {
+      passErrorMessage = "Şifreniz en az 6 karakterden oluşmalıdır.";
+      result = false;
+    } else {
+      passErrorMessage = null;
+    }
+    if (!mail.contains('@')) {
+      mailErrorMessage = "Lütfen geçerli bir e-posta adresi giriniz.";
+      result = false;
+    } else {
+      mailErrorMessage = null;
+    }
+
+    return result;
   }
 }

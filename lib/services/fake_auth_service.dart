@@ -12,7 +12,7 @@ class FakeAuthService implements AuthBase {
   @override
   Future<UserModel> signInAnonymously() async {
     return await Future.delayed(
-      Duration(seconds: 2),
+      Duration(seconds: 1),
       () => UserModel(userID: userID),
     );
   }
@@ -23,19 +23,26 @@ class FakeAuthService implements AuthBase {
   }
 
   @override
-  Future<UserModel> signInWithGoogle() {
-    return null;
+  Future<UserModel> signInWithGoogle() async {
+    return await Future.delayed(
+      Duration(seconds: 1),
+      () => UserModel(userID: userID),
+    );
   }
 
   @override
-  Future<UserModel> createWithMailAndPass(String mail, String pass) {
-      // TODO: implement createWithMailAndPass
-      throw UnimplementedError();
-    }
-  
-    @override
-    Future<UserModel> signInWithMailAndPass(String mail, String pass) {
-    // TODO: implement signInWithMailAndPass
-    throw UnimplementedError();
+  Future<UserModel> createWithMailAndPass(String mail, String pass) async {
+    return await Future.delayed(
+      Duration(seconds: 1),
+      () => UserModel(userID: userID),
+    );
+  }
+
+  @override
+  Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
+    return await Future.delayed(
+      Duration(seconds: 1),
+      () => UserModel(userID: userID),
+    );
   }
 }

@@ -18,6 +18,14 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
   FormType _formType = FormType.LogIn;
   final _formKey = GlobalKey<FormState>();
 
+  _changeFormType() {
+    setState(() {
+      _formType == FormType.LogIn
+          ? _formType = FormType.Register
+          : _formType = FormType.LogIn;
+    });
+  }
+
   _formSubmit() async {
     _formKey.currentState.save();
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
@@ -37,14 +45,6 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     }
   }
 
-  _changeFormType() {
-    setState(() {
-      _formType == FormType.LogIn
-          ? _formType = FormType.Register
-          : _formType = FormType.LogIn;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     _buttonText = _formType == FormType.LogIn ? "Giriş yap" : "Kayıt ol";
@@ -52,64 +52,84 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
         _formType == FormType.LogIn ? "Hesabınız yok mu?" : "Hesabınız var mı?";
     _linkText = _formType == FormType.LogIn ? "Kayıt olun." : "Giriş yapın.";
 
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
+
+    if (_userViewModel.userModel != null) {
+      Future.delayed(Duration(milliseconds: 1), () {
+        Navigator.of(context).pop();
+      });
+    }
+
     return Scaffold(
-        appBar: AppBar(
-          title: Text(_buttonText),
-        ),
-        body: SingleChildScrollView(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SignInTextFormField(
-                  obscureText: false,
-                  labelText: "E-Posta",
-                  prefixIcon: Icon(Icons.mail),
-                  keyboardType: TextInputType.emailAddress,
-                  onSaved: (String inputMail) {
-                    _mail = inputMail;
-                  },
+      appBar: AppBar(
+        title: Text(_buttonText),
+      ),
+      body: _userViewModel.state == ViewState.Idle
+          ? SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      SignInTextFormField(
+                        obscureText: false,
+                        labelText: "E-Posta",
+                        prefixIcon: Icon(Icons.mail),
+                        keyboardType: TextInputType.emailAddress,
+                        errorText: _userViewModel.mailErrorMessage != null
+                            ? _userViewModel.mailErrorMessage
+                            : null,
+                        onSaved: (String inputMail) {""
+                          _mail = inputMail;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SignInTextFormField(
+                        obscureText: true,
+                        labelText: "Parola",
+                        prefixIcon: Icon(Icons.vpn_key),
+                        errorText: _userViewModel.passErrorMessage != null
+                            ? _userViewModel.passErrorMessage
+                            : null,
+                        onSaved: (String inputPass) {
+                          _pass = inputPass;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SocialLogInButton(
+                        buttonText: _buttonText,
+                        buttonBgColor: Theme.of(context).primaryColor,
+                        onPressed: () => _formSubmit(),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _linkDescribeText,
+                            textAlign: TextAlign.center,
+                          ),
+                          FlatButton(
+                            child: Text(_linkText),
+                            onPressed: () => _changeFormType(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                SignInTextFormField(
-                  obscureText: true,
-                  labelText: "Parola",
-                  prefixIcon: Icon(Icons.vpn_key),
-                  onSaved: (String inputPass) {
-                    _pass = inputPass;
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SocialLogInButton(
-                  buttonText: _buttonText,
-                  buttonBgColor: Theme.of(context).primaryColor,
-                  onPressed: () => _formSubmit(),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _linkDescribeText,
-                      textAlign: TextAlign.center,
-                    ),
-                    FlatButton(
-                      child: Text(_linkText),
-                      onPressed: () => _changeFormType(),
-                    ),
-                  ],
-                ),
-              ],
+              ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
             ),
-          ),
-        )));
+    );
   }
 }
