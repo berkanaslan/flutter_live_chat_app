@@ -12,13 +12,17 @@ class FirestoreDBService implements DBBase {
         .doc(userModel.userID)
         .set(userModel.toMap());
 
-    DocumentSnapshot _readingValues =
-        await _firestore.doc("users/" + userModel.userID + "/").get();
+    return true;
+  }
 
-    Map _readingValuesMap = _readingValues.data();
+  @override
+  Future<UserModel> readUser(String userID) async {
+    DocumentSnapshot _readingValues =
+        await _firestore.collection('users').doc(userID).get();
+
+    Map<String, dynamic> _readingValuesMap = _readingValues.data();
     UserModel _userModelObject = UserModel.fromMap(_readingValuesMap);
     print("Okunan UserModel nesnesi: " + _userModelObject.toString());
-
-    return true;
+    return _userModelObject;
   }
 }

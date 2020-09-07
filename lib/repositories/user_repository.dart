@@ -65,7 +65,7 @@ class UserRepository implements AuthBase {
           await _firebaseAuthService.createWithMailAndPass(mail, pass);
       bool _result = await _firestoreDBService.saveUser(_userModel);
       if (_result) {
-        return _userModel;
+        return await _firestoreDBService.readUser(_userModel.userID);
       } else {
         return null;
       }
@@ -77,7 +77,10 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInWithMailAndPass(mail, pass);
     } else {
-      return await _firebaseAuthService.signInWithMailAndPass(mail, pass);
+      UserModel _userModel =
+          await _firebaseAuthService.signInWithMailAndPass(mail, pass);
+      return await _firestoreDBService.readUser(_userModel.userID);
     }
   }
 }
+    

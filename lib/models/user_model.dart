@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -16,7 +18,8 @@ class UserModel {
     return {
       'userID': userID,
       'mail': mail,
-      'userName': userName ?? '',
+      'userName': userName ??
+          mail.substring(0, mail.indexOf('@')) + buildRandomUserNameID(),
       'profilePhotoUrl':
           profilePhotoUrl ?? 'assets\\images\\defaultUserPhoto.jpg',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
@@ -37,5 +40,10 @@ class UserModel {
   @override
   String toString() {
     return 'User{userID: $userID, mail: $mail, userName: $userName, profilePhotoUrl: $profilePhotoUrl, createdAt: $createdAt, updatedAt: $updatedAt, level: $level}';
+  }
+
+  String buildRandomUserNameID() {
+    int random = Random().nextInt(999999);
+    return random.toString();
   }
 }
