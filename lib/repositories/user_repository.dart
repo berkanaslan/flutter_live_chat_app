@@ -49,7 +49,7 @@ class UserRepository implements AuthBase {
       UserModel _userModel = await _firebaseAuthService.signInWithGoogle();
       bool _result = await _firestoreDBService.saveUser(_userModel);
       if (_result) {
-        return _userModel;
+        return await _firestoreDBService.readUser(_userModel.userID);
       } else {
         return null;
       }
@@ -83,4 +83,3 @@ class UserRepository implements AuthBase {
     }
   }
 }
-    
