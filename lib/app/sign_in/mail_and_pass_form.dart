@@ -42,8 +42,11 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
           print("Oturum açan kullanıcı ID: " + _loggedInUser.userID.toString());
         }
       } on FirebaseException catch (e) {
-        print("Oturum açarken widget hatası: " +
-            Errors.showError(e.code.toString()));
+        return PlatformAlertDialog(
+          title: "Oturum açarken hata!",
+          message: Errors.showError(e.code.toString()),
+          mainActionText: "Tamam",
+        ).show(context);
       }
     } else {
       try {
@@ -61,6 +64,7 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

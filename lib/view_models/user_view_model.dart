@@ -26,10 +26,10 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  UserModel currentUser() {
+  Future<UserModel> currentUser() async {
     try {
       state = ViewState.Busy;
-      _userModel = _userRepository.currentUser();
+      _userModel = await _userRepository.currentUser();
       if (_userModel != null) {
         return _userModel;
       } else {
@@ -132,6 +132,11 @@ class UserViewModel with ChangeNotifier implements AuthBase {
       mailErrorMessage = null;
     }
 
+    return result;
+  }
+
+  Future<bool> updateUserName(String userID, String userName) async {
+    bool result = await _userRepository.updateUserName(userID, userName);
     return result;
   }
 }

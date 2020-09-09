@@ -8,21 +8,32 @@ class SignInTextFormField extends StatelessWidget {
   final FormFieldValidator<String> validator;
   final FormFieldSetter<String> onSaved;
   final TextInputType keyboardType;
-  const SignInTextFormField(
-      {Key key,
-      @required this.labelText,
-      this.obscureText,
-      @required this.prefixIcon,
-      @required this.onSaved,
-      this.validator,
-      this.keyboardType, this.errorText})
-      : super(key: key);
+  final String initialValue;
+  final bool readOnly;
+  final TextEditingController controller;
+
+  const SignInTextFormField({
+    Key key,
+    @required this.labelText,
+    this.obscureText: false,
+    @required this.prefixIcon,
+    this.onSaved,
+    this.validator,
+    this.keyboardType,
+    this.errorText,
+    this.initialValue,
+    this.readOnly: false,
+    this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
+      readOnly: readOnly,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      initialValue: initialValue,
       decoration: InputDecoration(
         errorText: errorText,
         prefixIcon: prefixIcon,

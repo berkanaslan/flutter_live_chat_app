@@ -6,8 +6,8 @@ class FakeAuthService implements AuthBase {
   String mail = "fake@mail.com";
 
   @override
-  UserModel currentUser() {
-    return UserModel(userID: userID, mail: mail);
+  Future<UserModel> currentUser() async {
+    return await Future.value(UserModel(userID: userID, mail: mail));
   }
 
   @override

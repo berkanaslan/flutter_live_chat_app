@@ -20,8 +20,8 @@ class UserModel {
       'mail': mail,
       'userName': userName ??
           mail.substring(0, mail.indexOf('@')) + buildRandomUserNameID(),
-      'profilePhotoUrl':
-          profilePhotoUrl ?? 'assets\\images\\defaultUserPhoto.jpg',
+      'profilePhotoUrl': profilePhotoUrl ??
+          'https://firebasestorage.googleapis.com/v0/b/flutter-live-chat-2020.appspot.com/o/images%2FdefaultUserPhoto.jpg?alt=media&token=548a3061-b001-4f48-a047-f7e2fe361d00',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'updatedAt': updatedAt ?? FieldValue.serverTimestamp(),
       'level': level ?? 1,
@@ -43,7 +43,7 @@ class UserModel {
   }
 
   String buildRandomUserNameID() {
-    int random = Random().nextInt(999999);
+    int random = Random().nextInt(9999999);
     return random.toString();
   }
 }

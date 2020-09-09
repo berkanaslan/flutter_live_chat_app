@@ -15,11 +15,12 @@ class UserRepository implements AuthBase {
   AppMode appMode = AppMode.RELEASE;
 
   @override
-  UserModel currentUser() {
+  Future<UserModel> currentUser() async {
     if (appMode == AppMode.DEBUG) {
-      return _fakeAuthService.currentUser();
+      return await _fakeAuthService.currentUser();
     } else {
-      return _firebaseAuthService.currentUser();
+      UserModel _userModel = await _firebaseAuthService.currentUser();
+      return await _firestoreDBService.readUser(_userModel.userID);
     }
   }
 
@@ -80,6 +81,15 @@ class UserRepository implements AuthBase {
       UserModel _userModel =
           await _firebaseAuthService.signInWithMailAndPass(mail, pass);
       return await _firestoreDBService.readUser(_userModel.userID);
+    }
+  }
+
+  Future<bool> updateUserName(String userID, String userName) async {
+    if (appMode == AppMode.DEBUG) {
+      return false;
+    } else {
+      bool result = await _firestoreDBService.updateUserName(userID, userName);
+      return result;
     }
   }
 }
