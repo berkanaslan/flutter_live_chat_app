@@ -1,4 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_live_chat_app/app/errors_exception.dart';
+import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/common_widgets/sign_in_text_form_field.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
@@ -31,16 +35,29 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
     if (_formType == FormType.LogIn) {
-      UserModel _loggedInUser =
-          await _userViewModel.signInWithMailAndPass(_mail, _pass);
-      if (_loggedInUser != null) {
-        print("Oturum açan kullanıcı ID: " + _loggedInUser.userID.toString());
+      try {
+        UserModel _loggedInUser =
+            await _userViewModel.signInWithMailAndPass(_mail, _pass);
+        if (_loggedInUser != null) {
+          print("Oturum açan kullanıcı ID: " + _loggedInUser.userID.toString());
+        }
+      } on FirebaseException catch (e) {
+        print("Oturum açarken widget hatası: " +
+            Errors.showError(e.code.toString()));
       }
     } else {
-      UserModel _createdUser =
-          await _userViewModel.createWithMailAndPass(_mail, _pass);
-      if (_createdUser != null) {
-        print("Kayıt olan kullanıcı ID: " + _createdUser.userID.toString());
+      try {
+        UserModel _createdUser =
+            await _userViewModel.createWithMailAndPass(_mail, _pass);
+        if (_createdUser != null) {
+          print("Kayıt olan kullanıcı ID: " + _createdUser.userID.toString());
+        }
+      } on FirebaseException catch (e) {
+        return PlatformAlertDialog(
+          title: "Kullanıcı oluşturulurken hata!",
+          message: Errors.showError(e.code.toString()),
+          mainActionText: "Tamam",
+        ).show(context);
       }
     }
   }

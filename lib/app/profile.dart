@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,7 @@ class ProfilePage extends StatelessWidget {
               "Çıkış yap",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () => _signOut(context),
+            onPressed: () => _buildSignOutAlertDialog(context),
           ),
         ],
       ),
@@ -28,5 +29,18 @@ class ProfilePage extends StatelessWidget {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     bool result = await _userViewModel.signOut();
     return result;
+  }
+
+  Future _buildSignOutAlertDialog(BuildContext context) async {
+    final result = await PlatformAlertDialog(
+      title: "Emin misiniz?",
+      message: "Çıkmak istediğinizden emin misiniz?",
+      mainActionText: "Çıkış yap",
+      secondActionText: "Vazgeç",
+    ).show(context);
+
+    if (result) {
+      _signOut(context);
+    }
   }
 }

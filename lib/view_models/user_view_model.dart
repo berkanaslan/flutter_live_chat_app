@@ -88,37 +88,31 @@ class UserViewModel with ChangeNotifier implements AuthBase {
 
   @override
   Future<UserModel> createWithMailAndPass(String mail, String pass) async {
-    try {
-      if (_mailAndPassControl(mail, pass)) {
+    if (_mailAndPassControl(mail, pass)) {
+      try {
         state = ViewState.Busy;
         _userModel = await _userRepository.createWithMailAndPass(mail, pass);
         return _userModel;
-      } else {
-        return null;
+      } finally {
+        state = ViewState.Idle;
       }
-    } catch (e) {
-      print("ViewModel createWithMailAndPass() hatası: " + e.toString());
+    } else {
       return null;
-    } finally {
-      state = ViewState.Idle;
     }
   }
 
   @override
   Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
-    try {
-      if (_mailAndPassControl(mail, pass)) {
+    if (_mailAndPassControl(mail, pass)) {
+      try {
         state = ViewState.Busy;
         _userModel = await _userRepository.signInWithMailAndPass(mail, pass);
         return _userModel;
-      } else {
-        return null;
+      } finally {
+        state = ViewState.Idle;
       }
-    } catch (e) {
-      print("ViewModel createWithMailAndPass() hatası: " + e.toString());
+    } else {
       return null;
-    } finally {
-      state = ViewState.Idle;
     }
   }
 

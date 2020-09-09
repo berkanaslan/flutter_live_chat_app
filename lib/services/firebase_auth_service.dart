@@ -78,27 +78,15 @@ class FirebaseAuthService implements AuthBase {
 
   @override
   Future<UserModel> createWithMailAndPass(String mail, String pass) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: mail, password: pass);
-      return _userFromFirebase(userCredential.user);
-    } catch (e) {
-      print("FirebaseAuthService createWithMailAndPass() hatası: " +
-          e.toString());
-      return null;
-    }
+    UserCredential userCredential = await _firebaseAuth
+        .createUserWithEmailAndPassword(email: mail, password: pass);
+    return _userFromFirebase(userCredential.user);
   }
 
   @override
   Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: mail, password: pass);
-      return _userFromFirebase(userCredential.user);
-    } catch (e) {
-      print(
-          "FirebaseAuthService signInWithMailAndPass hatası: " + e.toString());
-      return null;
-    }
+    UserCredential userCredential = await _firebaseAuth
+        .signInWithEmailAndPassword(email: mail, password: pass);
+    return _userFromFirebase(userCredential.user);
   }
 }
