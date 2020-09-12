@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => UserViewModel(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Live Chat',
         theme: ThemeData(
           primarySwatch: Colors.red,

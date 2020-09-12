@@ -65,7 +65,6 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     _buttonText = _formType == FormType.LogIn ? "Giriş yap" : "Kayıt ol";
@@ -92,10 +91,17 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                 child: Form(
                   key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          "E-Posta",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
                       SignInTextFormField(
                         obscureText: false,
-                        labelText: "E-Posta",
                         prefixIcon: Icon(Icons.mail),
                         keyboardType: TextInputType.emailAddress,
                         errorText: _userViewModel.mailErrorMessage != null
@@ -105,8 +111,12 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                           _mail = inputMail;
                         },
                       ),
-                      SizedBox(
-                        height: 10,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text(
+                          "Parola",
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                       SignInTextFormField(
                         obscureText: true,

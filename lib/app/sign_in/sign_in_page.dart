@@ -49,7 +49,10 @@ class SignInPage extends StatelessWidget {
                 size: 32,
                 color: Colors.white,
               ),
-              onPressed: () => _signInAnonymously(context),
+              onPressed: () {
+                /// SignIn Anon kaldırıldı.
+                ///´_signInAnonymously(context),
+              },
             ),
           ],
         ),
@@ -57,12 +60,15 @@ class SignInPage extends StatelessWidget {
     );
   }
 
+/*   
+Anon kaldırıldı:
   void _signInAnonymously(BuildContext context) async {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
     UserModel _userModel = await _userViewModel.signInAnonymously();
     if (_userModel != null)
       print("Giriş yapan misafir: " + _userModel.userID.toString());
   }
+*/
 
   void _signInWithGoogle(BuildContext context) async {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);

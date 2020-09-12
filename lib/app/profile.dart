@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/common_widgets/sign_in_text_form_field.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -12,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   TextEditingController _controllerUserName;
+  File _profilePhoto;
 
   @override
   void initState() {
@@ -45,44 +48,94 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: 75,
-                  backgroundImage:
-                      NetworkImage(_userViewModel.userModel.profilePhotoUrl),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: GestureDetector(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      radius: 75,
+                      backgroundImage: _profilePhoto == null
+                          ? NetworkImage(
+                              _userViewModel.userModel.profilePhotoUrl)
+                          : FileImage(_profilePhoto),
+                    ),
+                    onTap: () {
+                      showModalBottomSheet(
+                        useRootNavigator: true,
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            height:
+                                (MediaQuery.of(context).size.height / 5) + 8,
+                            child: Column(children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.camera),
+                                ),
+                                title: Text("Kamera"),
+                                subtitle: Text(
+                                    "Kamera ile yeni profil fotoğrafı edinin."),
+                                onTap: () {
+                                  _newProfilePhotoFromCamera();
+                                  // After closing bottom sheet
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(Icons.photo),
+                                ),
+                                title: Text("Galeri"),
+                                subtitle: Text(
+                                    "Galeriden yeni bir profil fotoğrafı seçin."),
+                                onTap: () {
+                                  _newProfilePhotoFromGallery();
+                                  // After closing bottom sheet
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ]),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SignInTextFormField(
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: Text(
+                    "E-Posta",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                SignInTextFormField(
                   prefixIcon: Icon(Icons.mail),
-                  labelText: "E-Posta",
                   initialValue: _userViewModel.userModel.mail,
                   readOnly: true,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SignInTextFormField(
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 8),
+                  child: Text(
+                    "Kullanıcı Adı",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                SignInTextFormField(
                   controller: _controllerUserName,
                   prefixIcon: Icon(Icons.person),
-                  labelText: "Kullanıcı Adı",
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SocialLogInButton(
+                SocialLogInButton(
                   buttonText: "Değişiklikleri kaydet",
                   buttonBgColor: Theme.of(context).primaryColor,
                   onPressed: () => _savedUserName(context),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -137,5 +190,19 @@ class _ProfilePageState extends State<ProfilePage> {
         mainActionText: "Tamam",
       ).show(context);
     }
+  }
+
+  void _newProfilePhotoFromCamera() async {
+    final image = await ImagePicker().getImage(source: ImageSource.camera);
+    setState(() {
+      _profilePhoto = File(image.path);
+    });
+  }
+
+  void _newProfilePhotoFromGallery() async {
+    final image = await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      _profilePhoto = File(image.path);
+    });
   }
 }

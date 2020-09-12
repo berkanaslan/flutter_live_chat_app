@@ -14,7 +14,7 @@ class SignInTextFormField extends StatelessWidget {
 
   const SignInTextFormField({
     Key key,
-    @required this.labelText,
+    this.labelText,
     this.obscureText: false,
     @required this.prefixIcon,
     this.onSaved,
@@ -43,7 +43,7 @@ class SignInTextFormField extends StatelessWidget {
           color: Colors.grey,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
             width: 0,
             style: BorderStyle.none,
