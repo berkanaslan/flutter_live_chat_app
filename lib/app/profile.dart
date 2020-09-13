@@ -64,46 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               _userViewModel.userModel.profilePhotoUrl)
                           : FileImage(_profilePhoto),
                     ),
-                    onTap: () {
-                      showModalBottomSheet(
-                        useRootNavigator: true,
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            height:
-                                (MediaQuery.of(context).size.height / 5) + 8,
-                            child: Column(children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.camera),
-                                ),
-                                title: Text("Kamera"),
-                                subtitle: Text(
-                                    "Kamera ile yeni profil fotoğrafı edinin."),
-                                onTap: () {
-                                  _newProfilePhotoFromCamera();
-                                  // After closing bottom sheet
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              ListTile(
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.photo),
-                                ),
-                                title: Text("Galeri"),
-                                subtitle: Text(
-                                    "Galeriden yeni bir profil fotoğrafı seçin."),
-                                onTap: () {
-                                  _newProfilePhotoFromGallery();
-                                  // After closing bottom sheet
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ]),
-                          );
-                        },
-                      );
-                    },
+                    onTap: () => _showBottomSheet(context),
                   ),
                 ),
                 Padding(
@@ -132,7 +93,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 SocialLogInButton(
                   buttonText: "Değişiklikleri kaydet",
                   buttonBgColor: Theme.of(context).primaryColor,
-                  onPressed: () => _savedUserName(context),
+                  onPressed: () {
+                    _savedUserName(context);
+                    _updateProfilePhoto(context);
+                  },
                 ),
               ],
             ),
@@ -167,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
       var result = await _userViewModel.updateUserName(
           _userViewModel.userModel.userID, _controllerUserName.text);
 
-      if (result == true) {
+      if (result) {
         _userViewModel.userModel.userName = _controllerUserName.text;
         PlatformAlertDialog(
           title: "Başarılı!",
@@ -183,13 +147,45 @@ class _ProfilePageState extends State<ProfilePage> {
           mainActionText: "Tamam",
         ).show(context);
       }
-    } else {
-      PlatformAlertDialog(
-        title: "Hata!",
-        message: "Kullanıcı adınız üzerinde herhangi bir değişiklik yapılmadı.",
-        mainActionText: "Tamam",
-      ).show(context);
     }
+  }
+
+  _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      useRootNavigator: true,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: (MediaQuery.of(context).size.height / 5) + 8,
+          child: Column(children: [
+            ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.camera),
+              ),
+              title: Text("Kamera"),
+              subtitle: Text("Kamera ile yeni profil fotoğrafı edinin."),
+              onTap: () {
+                _newProfilePhotoFromCamera();
+                // After closing bottom sheet
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.photo),
+              ),
+              title: Text("Galeri"),
+              subtitle: Text("Galeriden yeni bir profil fotoğrafı seçin."),
+              onTap: () {
+                _newProfilePhotoFromGallery();
+                // After closing bottom sheet
+                Navigator.of(context).pop();
+              },
+            ),
+          ]),
+        );
+      },
+    );
   }
 
   void _newProfilePhotoFromCamera() async {
@@ -204,5 +200,17 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _profilePhoto = File(image.path);
     });
+  }
+
+  void _updateProfilePhoto(BuildContext context) async {
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    if (_profilePhoto != null) {
+      String url = await _userViewModel.uploadFile(
+          _userViewModel.userModel.userID,
+          "images",
+          "profile_photo",
+          _profilePhoto);
+      print(url);
+    }
   }
 }

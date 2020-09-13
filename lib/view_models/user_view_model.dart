@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/locator.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
@@ -138,5 +140,12 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   Future<bool> updateUserName(String userID, String userName) async {
     bool result = await _userRepository.updateUserName(userID, userName);
     return result;
+  }
+
+  Future<String> uploadFile(String userID, String fileType, String fileName,
+      File profilePhoto) async {
+    var downloadUrl = await _userRepository.uploadFile(
+        userID, fileType, fileName, profilePhoto);
+    return downloadUrl;
   }
 }
