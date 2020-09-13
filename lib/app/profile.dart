@@ -71,7 +71,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
                     "E-Posta",
-                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SignInTextFormField(
@@ -83,7 +87,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.only(top: 8, bottom: 8),
                   child: Text(
                     "Kullanıcı Adı",
-                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SignInTextFormField(

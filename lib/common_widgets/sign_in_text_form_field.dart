@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SignInTextFormField extends StatelessWidget {
-  final String labelText;
+  final String hintText;
   final bool obscureText;
   final String errorText;
   final Widget prefixIcon;
@@ -14,9 +14,9 @@ class SignInTextFormField extends StatelessWidget {
 
   const SignInTextFormField({
     Key key,
-    this.labelText,
+    this.hintText,
     this.obscureText: false,
-    @required this.prefixIcon,
+    this.prefixIcon,
     this.onSaved,
     this.validator,
     this.keyboardType,
@@ -34,24 +34,24 @@ class SignInTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       initialValue: initialValue,
+      cursorColor: Colors.grey.shade700,
       decoration: InputDecoration(
         errorText: errorText,
         prefixIcon: prefixIcon,
-        labelText: labelText,
-        labelStyle: TextStyle(
-          fontSize: 16,
-          color: Colors.grey,
-        ),
+        hintText: hintText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(5),
           borderSide: BorderSide(
-            width: 0,
-            style: BorderStyle.none,
+            color: Colors.grey.shade700,
           ),
         ),
         filled: true,
-        fillColor: Colors.grey.shade300,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        fillColor: Colors.white,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      ),
+      style: TextStyle(
+        color: Colors.grey.shade700,
+        fontSize: 16,
       ),
       validator: validator,
       onSaved: onSaved,

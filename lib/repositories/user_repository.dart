@@ -53,11 +53,19 @@ class UserRepository implements AuthBase {
       return await _fakeAuthService.signInWithGoogle();
     } else {
       UserModel _userModel = await _firebaseAuthService.signInWithGoogle();
-      bool _result = await _firestoreDBService.saveUser(_userModel);
-      if (_result) {
+
+      bool _userDocExistResult =
+          await _firestoreDBService.checkUserDocExist(_userModel.userID);
+
+      if (_userDocExistResult) {
         return await _firestoreDBService.readUser(_userModel.userID);
       } else {
-        return null;
+        bool _result = await _firestoreDBService.saveUser(_userModel);
+        if (_result) {
+          return await _firestoreDBService.readUser(_userModel.userID);
+        } else {
+          return null;
+        }
       }
     }
   }

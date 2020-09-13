@@ -51,4 +51,16 @@ class FirestoreDBService implements DBBase {
         .update({'profilePhotoUrl': profilePhotoUrl});
     return true;
   }
+
+  Future<bool> checkUserDocExist(String userID) async {
+    DocumentSnapshot _snapshot =
+        await _firestore.collection('users').doc(userID).get();
+    if (_snapshot.exists) {
+      print("Kullanıcı veritabanına kayıtlı.");
+      return true;
+    } else {
+      print("Kullanıcı veritabanına kayıtlı değil");
+      return false;
+    }
+  }
 }

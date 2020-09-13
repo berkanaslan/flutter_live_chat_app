@@ -19,36 +19,46 @@ class SocialLogInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      onPressed: onPressed,
-      color: buttonBgColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(30),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+      child: Container(
+        height: 50,
+        child: RaisedButton(
+          onPressed: onPressed,
+          color: buttonBgColor,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Spreads, Collection if, Collection for: Dart 2.0+
+              if (buttonIcon != null) ...[
+                Opacity(opacity: 0, child: buttonIcon),
+                Text(
+                  buttonText,
+                  style: TextStyle(color: buttonTextColor),
+                ),
+                buttonIcon,
+              ],
+              if (buttonIcon == null) ...[
+                Container(),
+                Text(
+                  buttonText,
+                  style: TextStyle(color: buttonTextColor),
+                ),
+                Container(),
+              ]
+            ],
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Spreads, Collection if, Collection for: Dart 2.0+
-          if (buttonIcon != null) ...[
-            buttonIcon,
-            Text(
-              buttonText,
-              style: TextStyle(color: buttonTextColor),
-            ),
-            Opacity(opacity: 0, child: buttonIcon),
-          ],
-          if (buttonIcon == null) ...[
-            Container(),
-            Text(
-              buttonText,
-              style: TextStyle(color: buttonTextColor),
-            ),
-            Container(),
-          ]
-        ],
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1.5,
+            color: Theme.of(context).primaryColor,
+          ),
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0),
+          ),
+        ),
       ),
     );
   }

@@ -4,36 +4,49 @@ import 'package:flutter_live_chat_app/app/sign_in/mail_and_pass_form.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Live Chat"),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        title: Text(
+          "flutterlivechat.",
+          style: GoogleFonts.itim(
+            textStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Oturum açın",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
+            Container(
+              height: ((MediaQuery.of(context).size.height) * 3 / 5),
+              child: Image.asset(
+                "assets/images/signInPageImage.png",
+                fit: BoxFit.contain,
+              ),
             ),
             SocialLogInButton(
-              buttonBgColor: Colors.white,
-              buttonText: "Google ile oturum aç",
-              buttonTextColor: Colors.black,
-              buttonIcon: Image.asset("assets/images/google-logo.png"),
-              onPressed: () => _signInWithGoogle(context),
-            ),
-            SocialLogInButton(
-              buttonText: "E-Posta ile oturum aç",
+              buttonBgColor: Theme.of(context).primaryColor,
+              buttonText: "E-Posta ile devam et",
               buttonIcon: Icon(
                 Icons.mail,
                 size: 32,
@@ -41,6 +54,15 @@ class SignInPage extends StatelessWidget {
               ),
               onPressed: () => signInWithMailAndPass(context),
             ),
+            SocialLogInButton(
+              buttonBgColor: Colors.white,
+              buttonText: "Google ile devam et",
+              buttonTextColor: Colors.black,
+              buttonIcon: Image.asset("assets/images/google-logo.png"),
+              onPressed: () => _signInWithGoogle(context),
+            ),
+
+            /*
             SocialLogInButton(
               buttonBgColor: Color(0xFF334D92),
               buttonText: "Misafir olarak devam et",
@@ -50,10 +72,11 @@ class SignInPage extends StatelessWidget {
                 color: Colors.white,
               ),
               onPressed: () {
-                /// SignIn Anon kaldırıldı.
-                ///´_signInAnonymously(context),
+                SignIn Anon kaldırıldı.
+                _signInAnonymously(context),
               },
             ),
+          */
           ],
         ),
       ),

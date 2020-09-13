@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_live_chat_app/app/errors_exception.dart';
 import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/common_widgets/sign_in_text_form_field.dart';
@@ -70,7 +69,7 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     _buttonText = _formType == FormType.LogIn ? "Giriş yap" : "Kayıt ol";
     _linkDescribeText =
         _formType == FormType.LogIn ? "Hesabınız yok mu?" : "Hesabınız var mı?";
-    _linkText = _formType == FormType.LogIn ? "Kayıt olun." : "Giriş yapın.";
+    _linkText = _formType == FormType.LogIn ? " Kayıt olun." : " Giriş yapın.";
 
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
 
@@ -81,8 +80,17 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(_buttonText),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        title: Text(
+          _buttonText,
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: _userViewModel.state == ViewState.Idle
           ? SingleChildScrollView(
@@ -97,12 +105,16 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           "E-Posta",
-                          style: TextStyle(color: Colors.red),
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       SignInTextFormField(
                         obscureText: false,
-                        prefixIcon: Icon(Icons.mail),
+                        hintText: "E-Posta adresinizi giriniz",
                         keyboardType: TextInputType.emailAddress,
                         errorText: _userViewModel.mailErrorMessage != null
                             ? _userViewModel.mailErrorMessage
@@ -115,13 +127,16 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                         padding: const EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
                           "Parola",
-                          style: TextStyle(color: Colors.red),
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       SignInTextFormField(
                         obscureText: true,
-                        labelText: "Parola",
-                        prefixIcon: Icon(Icons.vpn_key),
+                        hintText: "Parolanızı giriniz",
                         errorText: _userViewModel.passErrorMessage != null
                             ? _userViewModel.passErrorMessage
                             : null,
@@ -137,6 +152,26 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                         buttonBgColor: Theme.of(context).primaryColor,
                         onPressed: () => _formSubmit(),
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              child: Text(
+                                "Parolamı unuttum",
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              onTap: () {
+                                print("Forgot pass codes");
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                       SizedBox(
                         height: 10,
                       ),
@@ -145,11 +180,17 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                         children: [
                           Text(
                             _linkDescribeText,
+                            style: TextStyle(fontWeight: FontWeight.w500),
                             textAlign: TextAlign.center,
                           ),
-                          FlatButton(
-                            child: Text(_linkText),
-                            onPressed: () => _changeFormType(),
+                          GestureDetector(
+                            child: Text(
+                              _linkText,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                            onTap: () => _changeFormType(),
                           ),
                         ],
                       ),
