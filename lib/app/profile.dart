@@ -222,7 +222,14 @@ class _ProfilePageState extends State<ProfilePage> {
           "images",
           "profile_photo",
           _profilePhoto);
-      print(url);
+
+      if (url != null) {
+        PlatformAlertDialog(
+          title: "Başarılı",
+          message: "Profil fotoğrafınız güncellendi.",
+          mainActionText: 'Kapat',
+        ).show(context);
+      }
     }
   }
 }
