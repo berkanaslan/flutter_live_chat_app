@@ -80,17 +80,12 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
+        centerTitle: true,
+        elevation: 0,
         title: Text(
           _buttonText,
-          style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
       ),
       body: _userViewModel.state == ViewState.Idle
           ? SingleChildScrollView(

@@ -36,7 +36,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profil"),
+        centerTitle: true,
+        elevation: 0,
+        title: Text(
+          "Profil",
+        ),
         actions: [
           FlatButton(
             child: Text(

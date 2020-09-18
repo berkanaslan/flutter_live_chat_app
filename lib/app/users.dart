@@ -5,7 +5,8 @@ class UsersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tüm kullanıcılar"),
+        centerTitle: true,
+        title: Text("Sohbet"),
       ),
       body: Center(
         child: Text("Kullanıcılar sayfası"),

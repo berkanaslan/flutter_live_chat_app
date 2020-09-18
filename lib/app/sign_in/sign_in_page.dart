@@ -11,11 +11,10 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        backgroundColor: ThemeData.light().scaffoldBackgroundColor,
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
