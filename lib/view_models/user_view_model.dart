@@ -148,4 +148,9 @@ class UserViewModel with ChangeNotifier implements AuthBase {
         userID, fileType, fileName, profilePhoto);
     return downloadUrl;
   }
+
+  Future<List<UserModel>> getAllUsers() async {
+    List<UserModel> _allUsersList = await _userRepository.getAllUsers();
+    return _allUsersList;
+  }
 }
