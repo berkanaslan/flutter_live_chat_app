@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
 import 'package:provider/provider.dart';
@@ -39,14 +40,27 @@ class _UsersPageState extends State<UsersPage> {
                     itemBuilder: (context, index) {
                       if (snapshot.data[index].userID !=
                           _userViewModel.userModel.userID) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                snapshot.data[index].profilePhotoUrl),  
+                        return GestureDetector(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snapshot.data[index].profilePhotoUrl),
+                            ),
+                            title: Text(
+                                "@" + snapshot.data[index].userName.toString()),
+                            subtitle:
+                                Text(snapshot.data[index].mail.toString()),
                           ),
-                          title: Text(
-                              "@" + snapshot.data[index].userName.toString()),
-                          subtitle: Text(snapshot.data[index].mail.toString()),
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  currentUser: _userViewModel.userModel,
+                                  chatUser: snapshot.data[index],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       } else {
                         return Container();

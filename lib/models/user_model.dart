@@ -39,11 +39,11 @@ class UserModel {
 
   @override
   String toString() {
-    return 'User{userID: $userID, mail: $mail, userName: $userName, profilePhotoUrl: $profilePhotoUrl, createdAt: $createdAt, updatedAt: $updatedAt, level: $level}';
+    return 'UserModel{userID: $userID, mail: $mail, userName: $userName, profilePhotoUrl: $profilePhotoUrl, createdAt: $createdAt, updatedAt: $updatedAt, level: $level}';
   }
 
   String buildRandomUserNameID() {
-    int random = Random().nextInt(9999999);
+    int random = Random().nextInt(99999999);
     return random.toString();
   }
 }
