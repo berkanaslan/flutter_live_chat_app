@@ -76,4 +76,15 @@ class FirestoreDBService implements DBBase {
 
     return _allUsers;
   }
+
+  @override
+  Stream getMessages(String currentUserID, String chatUserID) {
+    var _snapshots = _firestore
+        .collection("chats")
+        .doc(currentUserID + "--" + chatUserID)
+        .collection("messagges")
+        .orderBy("date")
+        .snapshots();
+    return _snapshots;
+  }
 }

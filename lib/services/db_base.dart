@@ -6,4 +6,5 @@ abstract class DBBase {
   Future<bool> updateUserName(String userID, String userName);
   Future<bool> updateProfilePhoto(String userID, String profilePhotoUrl);
   Future<List<UserModel>> getAllUsers();
+  Stream getMessages(String currentUserID, String chatUserID);
 }
