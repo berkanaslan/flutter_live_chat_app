@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class UsersPage extends StatefulWidget {
@@ -107,39 +106,48 @@ class _UsersPageState extends State<UsersPage> {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: circleRadius / 2.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10)),
-                          side: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
+                  Container(
+                    decoration: BoxDecoration(
+                      //  image: DecorationImage(
+                      //  image: NetworkImage("kapakfotografiUrl"),
+                      //  fit: BoxFit.cover,
+                      //  ),
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(top: circleRadius / 2.0),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(0),
+                              topRight: Radius.circular(0),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 48.0),
-                          child: Column(children: [
-                            Text(
-                              "@" + snapshot.data[index].userName.toString(),
-                              style: GoogleFonts.itim(
-                                textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w100,
-                                ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 48.0),
+                            child: Column(children: [
+                              Text(
+                                "@" + snapshot.data[index].userName.toString(),
+                                style: TextStyle(fontWeight: FontWeight.w600),
                               ),
-                            ),
-                            Text(snapshot.data[index].mail.toString()),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(snapshot.data[index].createdAt.toString()),
-                          ]),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(snapshot.data[index].mail.toString()),
+                              Text(
+                                snapshot.data[index].createdAt.toString(),
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ]),
+                          ),
                         ),
                       ),
                     ),
