@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_live_chat_app/locator.dart';
+import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/services/auth_base.dart';
 import 'package:flutter_live_chat_app/services/fake_auth_service.dart';
@@ -125,6 +126,15 @@ class UserRepository implements AuthBase {
       List<UserModel> result =
           await _firestoreDBService.getAllUsers(currentUserID);
       return result;
+    }
+  }
+
+  Stream<List<MessageModel>> getMessages(
+      UserModel currentUser, UserModel chatUser) {
+    if (appMode == AppMode.DEBUG) {
+      return Stream.empty();
+    } else {
+      return _firestoreDBService.getMessages(chatUser.userID, chatUser.userID);
     }
   }
 }

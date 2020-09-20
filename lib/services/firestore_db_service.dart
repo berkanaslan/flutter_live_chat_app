@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/services/db_base.dart';
 
@@ -80,13 +81,15 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Stream getMessages(String currentUserID, String chatUserID) {
+  Stream<List<MessageModel>> getMessages(String currentUserID, String chatUserID) {
     var _snapshots = _firestore
         .collection("chats")
         .doc(currentUserID + "--" + chatUserID)
         .collection("messagges")
         .orderBy("date")
         .snapshots();
-    return _snapshots;
+
+    return _snapshots.map((messageList) =>
+        messageList.docs.map((e) => MessageModel.fromMap(e.data())).toList());
   }
 }
