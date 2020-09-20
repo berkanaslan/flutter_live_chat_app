@@ -5,7 +5,7 @@ class MessageModel {
   final String toWho;
   final bool isFromMe;
   final String message;
-  final DateTime date;
+  final Timestamp date;
 
   MessageModel(
       {this.fromWho, this.toWho, this.isFromMe, this.message, this.date});
@@ -25,7 +25,7 @@ class MessageModel {
         toWho = map['toWho'],
         isFromMe = map['isFromMe'],
         message = map['message'],
-        date = (map['date'] as Timestamp).toDate();
+        date = map['date'];
 
   @override
   String toString() {

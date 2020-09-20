@@ -130,11 +130,20 @@ class UserRepository implements AuthBase {
   }
 
   Stream<List<MessageModel>> getMessages(
-      UserModel currentUser, UserModel chatUser) {
+      String currentUserID, String chatUserID) {
     if (appMode == AppMode.DEBUG) {
       return Stream.empty();
     } else {
-      return _firestoreDBService.getMessages(chatUser.userID, chatUser.userID);
+      return _firestoreDBService.getMessages(currentUserID, chatUserID);
+    }
+  }
+
+  Future<bool> sendMessage(MessageModel sendingMessage) async {
+    if (appMode == AppMode.DEBUG) {
+      return true;
+    } else {
+      await _firestoreDBService.saveMessage(sendingMessage);
+      return true;
     }
   }
 }

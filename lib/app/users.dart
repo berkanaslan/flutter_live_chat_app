@@ -34,7 +34,6 @@ class _UsersPageState extends State<UsersPage> {
                     _listTileType = true;
                   });
                 }
-                debugPrint(_listTileType.toString());
               },
             ),
           ],

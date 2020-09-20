@@ -21,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     UserModel _currentUser = widget.currentUser;
     UserModel _chatUser = widget.chatUser;
-    final _userViewModel = Provider.of<UserViewModel>(context);
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -35,20 +35,23 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Expanded(
               child: StreamBuilder<List<MessageModel>>(
-                stream: _userViewModel.getMessages(_currentUser, _chatUser),
+                stream: _userViewModel.getMessages(
+                    _currentUser.userID, _chatUser.userID),
                 builder: (context, streamMesssageList) {
                   if (!streamMesssageList.hasData) {
                     return Center(
                       child: CircularProgressIndicator(),
                     );
-                  } else {
-                    return ListView.builder(
-                      itemCount: streamMesssageList.data.length,
-                      itemBuilder: (context, index) {
-                        return Text(streamMesssageList.data[index].toString());
-                      },
-                    );
                   }
+
+                  List<MessageModel> allMessages = streamMesssageList.data;
+
+                  return ListView.builder(
+                    itemCount: allMessages.length,
+                    itemBuilder: (context, index) {
+                      return _buildMessageBalloon(allMessages[index]);
+                    },
+                  );
                 },
               ),
             ),
@@ -84,7 +87,23 @@ class _ChatPageState extends State<ChatPage> {
                         size: 24,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (_messageController.text.trim().length > 0) {
+                          MessageModel _sendingMessage = MessageModel(
+                            fromWho: _currentUser.userID,
+                            toWho: _chatUser.userID,
+                            isFromMe: true,
+                            message: _messageController.text,
+                          );
+
+                          var _result =
+                              await _userViewModel.sendMessage(_sendingMessage);
+
+                          if (_result) {
+                            _messageController.clear();
+                          }
+                        }
+                      },
                     ),
                   ),
                 ],
@@ -94,5 +113,53 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildMessageBalloon(MessageModel currentMessage) {
+    Color senderColor = Colors.blue;
+    Color receiverColor = Colors.greenAccent;
+
+    var _myMessage = currentMessage.isFromMe;
+
+    if (_myMessage == true) {
+      return Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: senderColor,
+              ),
+              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.all(8),
+              child: Text(currentMessage.message),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundImage: NetworkImage(widget.chatUser.profilePhotoUrl),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: receiverColor,
+              ),
+              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.all(8),
+              child: Text(currentMessage.message),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

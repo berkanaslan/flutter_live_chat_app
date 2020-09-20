@@ -81,15 +81,44 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Stream<List<MessageModel>> getMessages(String currentUserID, String chatUserID) {
-    var _snapshots = _firestore
+  Stream<List<MessageModel>> getMessages(
+      String currentUserID, String chatUserID) {
+    var snapshots = _firestore
         .collection("chats")
         .doc(currentUserID + "--" + chatUserID)
-        .collection("messagges")
+        .collection("messages")
         .orderBy("date")
-        .snapshots();
+        .snapshots();   
 
-    return _snapshots.map((messageList) =>
+    snapshots.forEach((e) => e.docs.forEach((e) => print(e.data.toString())));
+
+    return snapshots.map((messageList) =>
         messageList.docs.map((e) => MessageModel.fromMap(e.data())).toList());
+  }
+
+  Future<bool> saveMessage(MessageModel sendingMessage) async {
+    var _msgID = _firestore.collection("chats").doc().id;
+    var _myDocID = sendingMessage.fromWho + "--" + sendingMessage.toWho;
+    var _receiverDocID = sendingMessage.toWho + "--" + sendingMessage.fromWho;
+
+    var _sendingMessageMap = sendingMessage.toMap();
+
+    await _firestore
+        .collection("chats")
+        .doc(_myDocID)
+        .collection("messages")
+        .doc(_msgID)
+        .set(_sendingMessageMap);
+
+    _sendingMessageMap.update("isFromMe", (value) => false);
+
+    await _firestore
+        .collection("chats")
+        .doc(_receiverDocID)
+        .collection("messages")
+        .doc(_msgID)
+        .set(_sendingMessageMap);
+
+    return true;
   }
 }
