@@ -19,8 +19,11 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel _currentUser = widget.currentUser;
-    UserModel _chatUser = widget.chatUser;
+    UserModel currentUser = widget.currentUser;
+    UserModel chatUser = widget.chatUser;
+    print("Sohbet sahibi: " + currentUser.userID.toString());
+    print("Sohbet misafir: " + chatUser.userID.toString());
+    print(currentUser.userID.toString() + "--" + chatUser.userID.toString());
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +39,7 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: StreamBuilder<List<MessageModel>>(
                 stream: _userViewModel.getMessages(
-                    _currentUser.userID, _chatUser.userID),
+                    currentUser.userID.toString(), chatUser.userID.toString()),
                 builder: (context, streamMesssageList) {
                   if (!streamMesssageList.hasData) {
                     return Center(
@@ -90,8 +93,8 @@ class _ChatPageState extends State<ChatPage> {
                       onPressed: () async {
                         if (_messageController.text.trim().length > 0) {
                           MessageModel _sendingMessage = MessageModel(
-                            fromWho: _currentUser.userID,
-                            toWho: _chatUser.userID,
+                            fromWho: currentUser.userID,
+                            toWho: chatUser.userID,
                             isFromMe: true,
                             message: _messageController.text,
                           );

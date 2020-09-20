@@ -88,12 +88,12 @@ class FirestoreDBService implements DBBase {
         .doc(currentUserID + "--" + chatUserID)
         .collection("messages")
         .orderBy("date")
-        .snapshots();   
+        .snapshots();
 
     snapshots.forEach((e) => e.docs.forEach((e) => print(e.data.toString())));
 
-    return snapshots.map((messageList) =>
-        messageList.docs.map((e) => MessageModel.fromMap(e.data())).toList());
+    return snapshots.map((msgList) =>
+        msgList.docs.map((msg) => MessageModel.fromMap(msg.data())).toList());
   }
 
   Future<bool> saveMessage(MessageModel sendingMessage) async {
