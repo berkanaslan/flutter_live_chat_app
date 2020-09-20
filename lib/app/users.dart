@@ -43,7 +43,6 @@ class _UsersPageState extends State<UsersPage> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.length > 0) {
-                print(snapshot.data[0]);
                 if (_listTileType) {
                   return buildListView(context, _userViewModel, snapshot);
                 } else {

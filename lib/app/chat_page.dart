@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_bubble/bubble_type.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -21,17 +24,11 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     UserModel currentUser = widget.currentUser;
     UserModel chatUser = widget.chatUser;
-    print("Sohbet sahibi: " + currentUser.userID.toString());
-    print("Sohbet misafir: " + chatUser.userID.toString());
-    print(currentUser.userID.toString() + "--" + chatUser.userID.toString());
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         elevation: 0,
-        title: Text(
-          "Sohbet",
-        ),
+        title: Text("@" + chatUser.userName.toString()),
       ),
       body: Center(
         child: Column(
@@ -39,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: StreamBuilder<List<MessageModel>>(
                 stream: _userViewModel.getMessages(
-                    currentUser.userID.toString(), chatUser.userID.toString()),
+                    currentUser.userID, chatUser.userID),
                 builder: (context, streamMesssageList) {
                   if (!streamMesssageList.hasData) {
                     return Center(
@@ -119,48 +116,41 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildMessageBalloon(MessageModel currentMessage) {
-    Color senderColor = Colors.blue;
-    Color receiverColor = Colors.greenAccent;
+    Color senderColor = Theme.of(context).primaryColor;
+    Color receiverColor = Colors.blueGrey;
 
     var _myMessage = currentMessage.isFromMe;
 
     if (_myMessage == true) {
-      return Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: senderColor,
-              ),
-              padding: EdgeInsets.all(8),
-              margin: EdgeInsets.all(8),
-              child: Text(currentMessage.message),
-            ),
-          ],
+      return ChatBubble(
+        clipper: ChatBubbleClipper4(type: BubbleType.sendBubble),
+        alignment: Alignment.topRight,
+        margin: EdgeInsets.only(top: 5),
+        backGroundColor: senderColor,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.7,
+          ),
+          child: Text(
+            currentMessage.message,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.chatUser.profilePhotoUrl),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: receiverColor,
-              ),
-              padding: EdgeInsets.all(8),
-              margin: EdgeInsets.all(8),
-              child: Text(currentMessage.message),
-            ),
-          ],
+      return ChatBubble(
+        clipper: ChatBubbleClipper4(type: BubbleType.receiverBubble),
+        alignment: Alignment.topLeft,
+        margin: EdgeInsets.only(top: 5),
+        backGroundColor: receiverColor,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.7,
+          ),
+          child: Text(
+            currentMessage.message,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       );
     }

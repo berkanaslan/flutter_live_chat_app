@@ -83,14 +83,13 @@ class FirestoreDBService implements DBBase {
   @override
   Stream<List<MessageModel>> getMessages(
       String currentUserID, String chatUserID) {
+    var docID = currentUserID + "--" + chatUserID;
     var snapshots = _firestore
         .collection("chats")
-        .doc(currentUserID + "--" + chatUserID)
+        .doc(docID)
         .collection("messages")
-        .orderBy("date")
+        .orderBy("date", descending: false)
         .snapshots();
-
-    snapshots.forEach((e) => e.docs.forEach((e) => print(e.data.toString())));
 
     return snapshots.map((msgList) =>
         msgList.docs.map((msg) => MessageModel.fromMap(msg.data())).toList());
