@@ -65,13 +65,15 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<List<UserModel>> getAllUsers() async {
+  Future<List<UserModel>> getAllUsers(String currentUserID) async {
     QuerySnapshot _querySnapshot = await _firestore.collection("users").get();
     List<UserModel> _allUsers = [];
 
     for (DocumentSnapshot _singleUserMap in _querySnapshot.docs) {
       UserModel _singleUser = UserModel.fromMap(_singleUserMap.data());
-      _allUsers.add(_singleUser);
+      if (currentUserID != _singleUser.userID) {
+        _allUsers.add(_singleUser);
+      }
     }
 
     return _allUsers;

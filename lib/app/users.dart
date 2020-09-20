@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class UsersPage extends StatefulWidget {
@@ -10,62 +11,46 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  bool _listTileType = true;
 
   @override
   Widget build(BuildContext context) {
     UserViewModel _userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
         appBar: AppBar(
+          elevation: 0,
           centerTitle: true,
           title: Text("Sohbet"),
+          actions: [
+            IconButton(
+              color: Colors.white,
+              icon: _listTileType == true ? Icon(Icons.dns) : Icon(Icons.list),
+              onPressed: () {
+                if (_listTileType == true) {
+                  setState(() {
+                    _listTileType = false;
+                  });
+                } else {
+                  setState(() {
+                    _listTileType = true;
+                  });
+                }
+                debugPrint(_listTileType.toString());
+              },
+            ),
+          ],
         ),
         body: FutureBuilder<List<UserModel>>(
-          future: _userViewModel.getAllUsers(),
+          future: _userViewModel.getAllUsers(_userViewModel.userModel.userID),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data.length - 1 > 0) {
+              if (snapshot.data.length > 0) {
                 print(snapshot.data[0]);
-
-                return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      if (snapshot.data[index].userID !=
-                          _userViewModel.userModel.userID) {
-                        return GestureDetector(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  snapshot.data[index].profilePhotoUrl),
-                            ),
-                            title: Text(
-                                "@" + snapshot.data[index].userName.toString()),
-                            subtitle:
-                                Text(snapshot.data[index].mail.toString()),
-                          ),
-                          onTap: () {
-                            Navigator.of(context, rootNavigator: true).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChatPage(
-                                  currentUser: _userViewModel.userModel,
-                                  chatUser: snapshot.data[index],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        return Container();
-                      }
-                    });
+                if (_listTileType) {
+                  return buildListView(context, _userViewModel, snapshot);
+                } else {
+                  return buildGridView(context, _userViewModel, snapshot);
+                }
               } else {
                 return Center(
                   child: Text("Sistemde kayıtlı kullanıcı bulunamadı."),
@@ -76,5 +61,121 @@ class _UsersPageState extends State<UsersPage> {
             }
           },
         ));
+  }
+
+  ListView buildListView(BuildContext context, UserViewModel userViewModel,
+      AsyncSnapshot<List<UserModel>> snapshot) {
+    return ListView.builder(
+        itemCount: snapshot.data.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage:
+                    NetworkImage(snapshot.data[index].profilePhotoUrl),
+              ),
+              title: Text("@" + snapshot.data[index].userName.toString()),
+              subtitle: Text(snapshot.data[index].mail.toString()),
+            ),
+            onTap: () {
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                    currentUser: userViewModel.userModel,
+                    chatUser: snapshot.data[index],
+                  ),
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  buildGridView(BuildContext context, UserViewModel userViewModel,
+      AsyncSnapshot<List<UserModel>> snapshot) {
+    double circleRadius = 96;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+          itemCount: snapshot.data.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              mainAxisSpacing: 10,
+              childAspectRatio: (12 / 6)),
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: circleRadius / 2.0),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
+                          side: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 48.0),
+                          child: Column(children: [
+                            Text(
+                              "@" + snapshot.data[index].userName.toString(),
+                              style: GoogleFonts.itim(
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w100,
+                                ),
+                              ),
+                            ),
+                            Text(snapshot.data[index].mail.toString()),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(snapshot.data[index].createdAt.toString()),
+                          ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: circleRadius,
+                    height: circleRadius,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DecoratedBox(
+                        decoration: ShapeDecoration(
+                          shape: CircleBorder(),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              snapshot.data[index].profilePhotoUrl,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              onTap: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      currentUser: userViewModel.userModel,
+                      chatUser: snapshot.data[index],
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
+    );
   }
 }

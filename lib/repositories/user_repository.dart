@@ -118,11 +118,12 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Future<List<UserModel>> getAllUsers() async {
+  Future<List<UserModel>> getAllUsers(String currentUserID) async {
     if (appMode == AppMode.DEBUG) {
       return [];
     } else {
-      List<UserModel> result = await _firestoreDBService.getAllUsers();
+      List<UserModel> result =
+          await _firestoreDBService.getAllUsers(currentUserID);
       return result;
     }
   }
