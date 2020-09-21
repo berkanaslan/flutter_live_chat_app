@@ -1,8 +1,10 @@
 import 'package:bubble/bubble.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -17,12 +19,14 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   var _messageController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     UserModel currentUser = widget.currentUser;
     UserModel chatUser = widget.chatUser;
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -45,6 +49,8 @@ class _ChatPageState extends State<ChatPage> {
                   List<MessageModel> allMessages = streamMesssageList.data;
 
                   return ListView.builder(
+                    reverse: true,
+                    controller: _scrollController,
                     itemCount: allMessages.length,
                     itemBuilder: (context, index) {
                       return _buildMessageBalloon(allMessages[index]);
@@ -99,6 +105,9 @@ class _ChatPageState extends State<ChatPage> {
 
                           if (_result) {
                             _messageController.clear();
+                            _scrollController.animateTo(0.0,
+                                duration: Duration(milliseconds: 50),
+                                curve: Curves.easeInCubic);
                           }
                         }
                       },
@@ -114,25 +123,82 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildMessageBalloon(MessageModel currentMessage) {
-    Color senderColor = Theme.of(context).primaryColor;
-    Color receiverColor = Colors.blueGrey;
-
     var _myMessage = currentMessage.isFromMe;
+
+    var _dateHm = _formatDateHm(currentMessage.date);
+
+    var _dateyMd = _formatDateyMd(currentMessage.date);
+
+    //TODO : Buraya güne göre listelenmiş mesajlar gelecek.
+
+    if (_dateyMd == _dateyMd) {
+      return Bubble(
+        stick: true,
+        color: Color.fromRGBO(212, 234, 244, 1.0),
+        child: Text(_dateyMd,
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 11.0)),
+      );
+    }
 
     if (_myMessage == true) {
       return Bubble(
-        margin: BubbleEdges.only(top: 10),
+        margin: BubbleEdges.all(5),
+        alignment: Alignment.topRight,
+        nipWidth: 8,
+        nipHeight: 24,
         nip: BubbleNip.rightTop,
-        color: senderColor,
-        child: Text(currentMessage.message, textAlign: TextAlign.right),
+        color: Color.fromRGBO(225, 255, 199, 1.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(currentMessage.message, textAlign: TextAlign.right),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              _dateHm.toString(),
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.grey, fontSize: 11),
+            ),
+          ],
+        ),
       );
     } else {
       return Bubble(
-        margin: BubbleEdges.only(top: 10),
+        margin: BubbleEdges.all(5),
+        alignment: Alignment.topLeft,
+        nipWidth: 8,
+        nipHeight: 24,
         nip: BubbleNip.leftTop,
-        color: receiverColor,
-        child: Text(currentMessage.message, textAlign: TextAlign.right),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(currentMessage.message, textAlign: TextAlign.right),
+            SizedBox(
+              height: 5,
+            ),
+            Text(
+              _dateHm.toString(),
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.grey, fontSize: 11),
+            ),
+          ],
+        ),
       );
     }
+  }
+
+  String _formatDateHm(Timestamp date) {
+    var dateFormat = DateFormat.Hm();
+    var _formatter = dateFormat;
+    var _formattedDate = _formatter.format(date.toDate());
+    return _formattedDate;
+  }
+
+  _formatDateyMd(Timestamp date) {
+    var dateFormat = DateFormat.yMd();
+    var _formatter = dateFormat;
+    var _formattedDate = _formatter.format(date.toDate());
+    return _formattedDate;
   }
 }

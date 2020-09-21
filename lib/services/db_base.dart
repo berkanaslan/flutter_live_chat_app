@@ -9,4 +9,5 @@ abstract class DBBase {
   Future<List<UserModel>> getAllUsers(String currentUserID);
   Stream<List<MessageModel>> getMessages(String currentUserID, String chatUserID);
   Future<bool> saveMessage(MessageModel sendingMessage);
+
 }

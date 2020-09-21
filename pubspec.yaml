@@ -38,6 +38,7 @@ dependencies:
   firebase_storage: ^4.0.0
   google_fonts: ^1.1.0
   bubble: ^1.1.9+1
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
