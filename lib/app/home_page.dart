@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/app/chat_history.dart';
 import 'package:flutter_live_chat_app/app/my_custom_bottom_navi_bar.dart';
 import 'package:flutter_live_chat_app/app/profile.dart';
 import 'package:flutter_live_chat_app/app/tab_items.dart';
@@ -18,12 +19,14 @@ class _HomePageState extends State<HomePage> {
 
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.AllUsers: GlobalKey<NavigatorState>(),
+    TabItem.ChatHistory: GlobalKey<NavigatorState>(),
     TabItem.Profile: GlobalKey<NavigatorState>(),
   };
 
   Map<TabItem, Widget> allPages() {
     return {
       TabItem.AllUsers: UsersPage(),
+      TabItem.ChatHistory: ChatHistory(),
       TabItem.Profile: ProfilePage(),
     };
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/locator.dart';
+import 'package:flutter_live_chat_app/models/chats_model.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/repositories/user_repository.dart';
@@ -157,11 +158,15 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   }
 
   Stream<List<MessageModel>> getMessages(
-     String currentUserID, String chatUserID) {
+      String currentUserID, String chatUserID) {
     return _userRepository.getMessages(currentUserID, chatUserID);
   }
 
   Future<bool> sendMessage(MessageModel sendingMessage) async {
     return await _userRepository.sendMessage(sendingMessage);
+  }
+
+  Future<List<ChatModel>> getAllConversations(String userID) async {
+    return await _userRepository.getAllConversations(userID);
   }
 }

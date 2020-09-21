@@ -166,12 +166,14 @@ class _ChatPageState extends State<ChatPage> {
                             message: _messageController.text,
                           );
 
+                          _messageController.clear();
+
                           var _result =
                               await _userViewModel.sendMessage(_sendingMessage);
 
                           if (_result) {
-                            _messageController.clear();
-                            _scrollController.animateTo(0.0,
+                            _scrollController.animateTo(
+                                _scrollController.position.maxScrollExtent,
                                 duration: Duration(milliseconds: 50),
                                 curve: Curves.easeInCubic);
                           }

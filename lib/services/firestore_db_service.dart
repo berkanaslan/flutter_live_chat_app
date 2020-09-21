@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_live_chat_app/models/chats_model.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/services/db_base.dart';
@@ -109,6 +110,15 @@ class FirestoreDBService implements DBBase {
         .doc(_msgID)
         .set(_sendingMessageMap);
 
+    await _firestore.collection("chats").doc(_myDocID).set({
+      'chatOwner': sendingMessage.fromWho,
+      'chatUser': sendingMessage.toWho,
+      'createdAt': FieldValue.serverTimestamp(),
+      'isRead': true,
+      'lastMessage': sendingMessage.message,
+      'readedTime': FieldValue.serverTimestamp(),
+    });
+
     _sendingMessageMap.update("isFromMe", (value) => false);
 
     await _firestore
@@ -118,6 +128,32 @@ class FirestoreDBService implements DBBase {
         .doc(_msgID)
         .set(_sendingMessageMap);
 
+    await _firestore.collection("chats").doc(_receiverDocID).set({
+      'chatOwner': sendingMessage.toWho,
+      'chatUser': sendingMessage.fromWho,
+      'createdAt': FieldValue.serverTimestamp(),
+      'isRead': true,
+      'lastMessage': sendingMessage.message,
+      'readedTime': FieldValue.serverTimestamp(),
+    });
+
     return true;
+  }
+
+  @override
+  Future<List<ChatModel>> getAllConversations(String currentUserID) async {
+    QuerySnapshot _querySnapshot = await _firestore
+        .collection("chats")
+        .where("chatOwner", isEqualTo: currentUserID)
+        .orderBy("createdAt", descending: true)
+        .get();
+
+    List<ChatModel> _allConversations = [];
+
+    for (DocumentSnapshot _singleConversationMap in _querySnapshot.docs) {
+      _allConversations.add(ChatModel.fromMap(_singleConversationMap.data()));
+    }
+
+    return _allConversations;
   }
 }
