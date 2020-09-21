@@ -1,7 +1,5 @@
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_bubble/bubble_type.dart';
-import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_4.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -122,36 +120,18 @@ class _ChatPageState extends State<ChatPage> {
     var _myMessage = currentMessage.isFromMe;
 
     if (_myMessage == true) {
-      return ChatBubble(
-        clipper: ChatBubbleClipper4(type: BubbleType.sendBubble),
-        alignment: Alignment.topRight,
-        margin: EdgeInsets.only(top: 5),
-        backGroundColor: senderColor,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          child: Text(
-            currentMessage.message,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+      return Bubble(
+        margin: BubbleEdges.only(top: 10),
+        nip: BubbleNip.rightTop,
+        color: senderColor,
+        child: Text(currentMessage.message, textAlign: TextAlign.right),
       );
     } else {
-      return ChatBubble(
-        clipper: ChatBubbleClipper4(type: BubbleType.receiverBubble),
-        alignment: Alignment.topLeft,
-        margin: EdgeInsets.only(top: 5),
-        backGroundColor: receiverColor,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          child: Text(
-            currentMessage.message,
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+      return Bubble(
+        margin: BubbleEdges.only(top: 10),
+        nip: BubbleNip.leftTop,
+        color: receiverColor,
+        child: Text(currentMessage.message, textAlign: TextAlign.right),
       );
     }
   }
