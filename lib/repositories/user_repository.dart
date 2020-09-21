@@ -148,11 +148,11 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Future<List<ChatModel>> getAllConversations(String userID) async {
+  Stream<List<ChatModel>> getAllConversations(String userID) {
     if (appMode == AppMode.DEBUG) {
-      return [];
+      return Stream.empty();
     } else {
-      return await _firestoreDBService.getAllConversations(userID);
+      return _firestoreDBService.getAllConversations(userID);
     }
   }
 }

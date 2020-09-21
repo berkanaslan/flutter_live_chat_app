@@ -17,27 +17,17 @@ class _ChatHistoryState extends State<ChatHistory> {
         centerTitle: true,
         title: Text("Geçmiş"),
       ),
-      body: FutureBuilder<List<ChatModel>>(
-        future:
+      body: StreamBuilder<List<ChatModel>>(
+        stream:
             _userViewModel.getAllConversations(_userViewModel.userModel.userID),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            var allConversations = snapshot.data;
-
-            return ListView.builder(
-              itemCount: allConversations.length,
+        builder: (context, streamList) {
+          return ListView.builder(
+              itemCount: streamList.data.length,
               itemBuilder: (context, index) {
-                var currentChat = allConversations[index];
-                
-                print(allConversations.toString());
                 return ListTile(
-                  title: Text(currentChat.lastMessage),
+                  title: Text(streamList.data[index].lastMessage),
                 );
-              },
-            );
-          }
+              });
         },
       ),
     );
