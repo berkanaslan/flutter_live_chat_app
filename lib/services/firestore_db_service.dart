@@ -88,7 +88,7 @@ class FirestoreDBService implements DBBase {
         .collection("chats")
         .doc(docID)
         .collection("messages")
-        .orderBy("date", descending: true)
+        .orderBy("date", descending: false)
         .snapshots();
 
     return snapshots.map((msgList) =>

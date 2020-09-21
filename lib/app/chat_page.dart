@@ -1,6 +1,7 @@
 import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/common_widgets/custom_appbar.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -28,9 +29,28 @@ class _ChatPageState extends State<ChatPage> {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text("@" + chatUser.userName.toString()),
+      appBar: CustomAppBar(
+        onImagetab: () {},
+        profilePic: Image.network(
+          chatUser.profilePhotoUrl,
+          height: 40,
+          width: 40,
+          fit: BoxFit.cover,
+        ),
+        username: "@" + chatUser.userName,
+        status: Text(
+          chatUser.mail,
+          style: TextStyle(color: Colors.white),
+        ),
+        color: Theme.of(context).primaryColor,
+        backButtonColor: Colors.white,
+        backbutton: IconButton(
+          icon: Icon(Icons.keyboard_arrow_left),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          color: Colors.white,
+        ),
       ),
       body: Center(
         child: Column(
@@ -48,14 +68,60 @@ class _ChatPageState extends State<ChatPage> {
 
                   List<MessageModel> allMessages = streamMesssageList.data;
 
-                  return ListView.builder(
-                    reverse: true,
-                    controller: _scrollController,
-                    itemCount: allMessages.length,
-                    itemBuilder: (context, index) {
-                      return _buildMessageBalloon(allMessages[index]);
-                    },
-                  );
+                  if (allMessages.length > 0) {
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: allMessages.length,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          var _dateyMd =
+                              _formatDateyMd(allMessages[index].date);
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Bubble(
+                                  alignment: Alignment.center,
+                                  color: Color.fromRGBO(212, 234, 244, 1.0),
+                                  child: Text(_dateyMd.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 11.0)),
+                                ),
+                              ),
+                              _buildMessageBalloon(allMessages[index]),
+                            ],
+                          );
+                        } else {
+                          var _dateyMd =
+                              _formatDateyMd(allMessages[index].date);
+                          var _prevDateyMd =
+                              _formatDateyMd(allMessages[index - 1].date);
+
+                          if (_dateyMd == _prevDateyMd) {
+                            return _buildMessageBalloon(allMessages[index]);
+                          } else {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Bubble(
+                                    alignment: Alignment.center,
+                                    color: Color.fromRGBO(212, 234, 244, 1.0),
+                                    child: Text(_dateyMd.toString(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 11.0)),
+                                  ),
+                                ),
+                                _buildMessageBalloon(allMessages[index]),
+                              ],
+                            );
+                          }
+                        }
+                      },
+                    );
+                  } else {
+                    return Container();
+                  }
                 },
               ),
             ),
@@ -124,68 +190,52 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessageBalloon(MessageModel currentMessage) {
     var _myMessage = currentMessage.isFromMe;
-
     var _dateHm = _formatDateHm(currentMessage.date);
 
-    var _dateyMd = _formatDateyMd(currentMessage.date);
-
-    //TODO : Buraya güne göre listelenmiş mesajlar gelecek.
-
-    if (_dateyMd == _dateyMd) {
-      return Bubble(
-        stick: true,
-        color: Color.fromRGBO(212, 234, 244, 1.0),
-        child: Text(_dateyMd,
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 11.0)),
-      );
-    }
-
-    if (_myMessage == true) {
-      return Bubble(
-        margin: BubbleEdges.all(5),
-        alignment: Alignment.topRight,
-        nipWidth: 8,
-        nipHeight: 24,
-        nip: BubbleNip.rightTop,
-        color: Color.fromRGBO(225, 255, 199, 1.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(currentMessage.message, textAlign: TextAlign.right),
-            SizedBox(
-              height: 5,
+    return _myMessage == true
+        ? Bubble(
+            margin: BubbleEdges.all(5),
+            alignment: Alignment.topRight,
+            nipWidth: 8,
+            nipHeight: 24,
+            nip: BubbleNip.rightTop,
+            color: Color.fromRGBO(225, 255, 199, 1.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(currentMessage.message, textAlign: TextAlign.right),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  _dateHm.toString(),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                ),
+              ],
             ),
-            Text(
-              _dateHm.toString(),
-              textAlign: TextAlign.right,
-              style: TextStyle(color: Colors.grey, fontSize: 11),
+          )
+        : Bubble(
+            margin: BubbleEdges.all(5),
+            alignment: Alignment.topLeft,
+            nipWidth: 8,
+            nipHeight: 24,
+            nip: BubbleNip.leftTop,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(currentMessage.message, textAlign: TextAlign.right),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  _dateHm.toString(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    } else {
-      return Bubble(
-        margin: BubbleEdges.all(5),
-        alignment: Alignment.topLeft,
-        nipWidth: 8,
-        nipHeight: 24,
-        nip: BubbleNip.leftTop,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(currentMessage.message, textAlign: TextAlign.right),
-            SizedBox(
-              height: 5,
-            ),
-            Text(
-              _dateHm.toString(),
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Colors.grey, fontSize: 11),
-            ),
-          ],
-        ),
-      );
-    }
+          );
   }
 
   String _formatDateHm(Timestamp date) {
@@ -195,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
     return _formattedDate;
   }
 
-  _formatDateyMd(Timestamp date) {
+  String _formatDateyMd(Timestamp date) {
     var dateFormat = DateFormat.yMd();
     var _formatter = dateFormat;
     var _formattedDate = _formatter.format(date.toDate());
