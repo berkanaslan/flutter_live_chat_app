@@ -166,6 +166,7 @@ class UserRepository implements AuthBase {
           print("Konuşulan kişinin verileri local cache'den çağırıldı.");
           currentC.chatUserProfilePhotoUrl = userInUserList.profilePhotoUrl;
           currentC.chatUserUserName = userInUserList.userName;
+          currentC.chatUserMail = userInUserList.mail;
         } else {
           print("Konuşulan kişinin verileri veritabanından çağırıldı.");
           var userDetailsInDatabase =
@@ -173,6 +174,7 @@ class UserRepository implements AuthBase {
           currentC.chatUserProfilePhotoUrl =
               userDetailsInDatabase.profilePhotoUrl;
           currentC.chatUserUserName = userDetailsInDatabase.userName;
+          currentC.chatUserMail = userDetailsInDatabase.mail;
         }
 
         calculateTimeAgo(currentC, time);

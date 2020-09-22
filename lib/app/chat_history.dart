@@ -46,18 +46,20 @@ class _ChatHistoryState extends State<ChatHistory> {
                             : Text(future.data[index].lastMessage),
                         trailing: Text(future.data[index].timeDifference),
                         onTap: () {
-                          _userViewModel
-                              .getUser(future.data[index].chatUser)
-                              .then((value) {
-                            Navigator.of(context, rootNavigator: true).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChatPage(
-                                  currentUser: _userViewModel.userModel,
-                                  chatUser: value,
-                                ),
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                currentUser: _userViewModel.userModel,
+                                chatUser: UserModel.forChatPage(
+                                    userID: future.data[index].chatUser,
+                                    profilePhotoUrl: future
+                                        .data[index].chatUserProfilePhotoUrl,
+                                    userName:
+                                        future.data[index].chatUserUserName,
+                                    mail: future.data[index].chatUserMail),
                               ),
-                            );
-                          });
+                            ),
+                          );
                         },
                       );
                     }),

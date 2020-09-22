@@ -9,6 +9,7 @@ class ChatModel {
   final Timestamp readedTime;
   String chatUserUserName;
   String chatUserProfilePhotoUrl;
+  String chatUserMail;
   DateTime lastSeenTime;
   String timeDifference;
 
