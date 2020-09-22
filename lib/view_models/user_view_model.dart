@@ -166,7 +166,11 @@ class UserViewModel with ChangeNotifier implements AuthBase {
     return await _userRepository.sendMessage(sendingMessage);
   }
 
-  Stream<List<ChatModel>> getAllConversations(String userID) {
+  Future<List<ChatModel>> getAllConversations(String userID) {
     return _userRepository.getAllConversations(userID);
+  }
+
+  Future<UserModel> getUser(String userID) {
+    return _userRepository.getUser(userID);
   }
 }

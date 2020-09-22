@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_live_chat_app/locator.dart';
@@ -20,6 +21,7 @@ class UserRepository implements AuthBase {
       locator<FirebaseStorageService>();
 
   AppMode appMode = AppMode.RELEASE;
+  List<UserModel> allUsersList = [];
 
   @override
   Future<UserModel> currentUser() async {
@@ -124,9 +126,8 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return [];
     } else {
-      List<UserModel> result =
-          await _firestoreDBService.getAllUsers(currentUserID);
-      return result;
+      allUsersList = await _firestoreDBService.getAllUsers(currentUserID);
+      return allUsersList;
     }
   }
 
@@ -148,11 +149,52 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Stream<List<ChatModel>> getAllConversations(String userID) {
+  Future<List<ChatModel>> getAllConversations(String userID) async {
     if (appMode == AppMode.DEBUG) {
-      return Stream.empty();
+      return [];
     } else {
-      return _firestoreDBService.getAllConversations(userID);
+      DateTime time = await _firestoreDBService.showTime(userID);
+
+      var chatHistoryList =
+          await _firestoreDBService.getAllConversations(userID);
+
+      for (ChatModel currentC in chatHistoryList) {
+        var userInUserList = findUserInUserList(currentC.chatUser);
+
+        if (userInUserList != null) {
+          print("Konuşulan kişinin verileri local cache'den çağırıldı.");
+          currentC.chatUserProfilePhotoUrl = userInUserList.profilePhotoUrl;
+          currentC.chatUserUserName = userInUserList.userName;
+          currentC.lastSeenTime = time;
+        } else {
+          print("Konuşulan kişinin verileri veritabanından çağırıldı.");
+          var userDetailsInDatabase =
+              await _firestoreDBService.readUser(currentC.chatUser);
+          currentC.chatUserProfilePhotoUrl =
+              userDetailsInDatabase.profilePhotoUrl;
+          currentC.chatUserUserName = userDetailsInDatabase.userName;
+          currentC.lastSeenTime = time;
+        }
+      }
+      return chatHistoryList;
+    }
+  }
+
+  UserModel findUserInUserList(String userID) {
+    for (int i = 0; i < allUsersList.length; i++) {
+      if (allUsersList[i].userID == userID) {
+        return allUsersList[i];
+      }
+    }
+
+    return null;
+  }
+
+  Future<UserModel> getUser(String userID) async {
+    if (appMode == AppMode.DEBUG) {
+      return null;
+    } else {
+      return await _firestoreDBService.getUser(userID);
     }
   }
 }

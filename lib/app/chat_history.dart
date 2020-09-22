@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/chats_model.dart';
+import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -15,21 +17,95 @@ class _ChatHistoryState extends State<ChatHistory> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Geçmiş"),
+        title: Text("Konuşmalarım"),
       ),
-      body: StreamBuilder<List<ChatModel>>(
-        stream:
+      body: FutureBuilder<List<ChatModel>>(
+        future:
             _userViewModel.getAllConversations(_userViewModel.userModel.userID),
-        builder: (context, streamList) {
-          return ListView.builder(
-              itemCount: streamList.data.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(streamList.data[index].lastMessage),
-                );
-              });
+        builder: (context, future) {
+          if (future.hasData) {
+            if (future.data.length > 0) {
+              return RefreshIndicator(
+                onRefresh: _refreshChatHistory,
+                child: ListView.builder(
+                    itemCount: future.data.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              future.data[index].chatUserProfilePhotoUrl,
+                            ),
+                          ),
+                          title: Text(
+                            "@" + future.data[index].chatUserUserName,
+                          ),
+                          subtitle: future.data[index].lastMessage.length > 25
+                              ? Text(future.data[index].lastMessage
+                                      .substring(0, 25) +
+                                  "...")
+                              : Text(future.data[index].lastMessage),
+                        ),
+                        onTap: () async {
+                          UserModel chatUserDetails = await _userViewModel
+                              .getUser(future.data[index].chatUser);
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                currentUser: _userViewModel.userModel,
+                                chatUser: chatUserDetails,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }),
+              );
+            } else {
+              return RefreshIndicator(
+                onRefresh: _refreshChatHistory,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height - 92,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height:
+                                ((MediaQuery.of(context).size.height) * 2 / 6),
+                            child: Image.asset(
+                              "assets/images/userNotFound.png",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Text(
+                            "Henüz kimseyle sohbet etmediniz..",
+                            style: TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
       ),
     );
+  }
+
+  Future<Null> _refreshChatHistory() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    setState(() {});
+    return null;
   }
 }

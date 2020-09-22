@@ -44,13 +44,46 @@ class _UsersPageState extends State<UsersPage> {
             if (snapshot.hasData) {
               if (snapshot.data.length > 0) {
                 if (_listTileType) {
-                  return buildListView(context, _userViewModel, snapshot);
+                  return RefreshIndicator(
+                      onRefresh: _refreshUserList,
+                      child: buildListView(context, _userViewModel, snapshot));
                 } else {
-                  return buildGridView(context, _userViewModel, snapshot);
+                  return RefreshIndicator(
+                    onRefresh: _refreshUserList,
+                    child: buildGridView(context, _userViewModel, snapshot),
+                  );
                 }
               } else {
-                return Center(
-                  child: Text("Sistemde kayıtlı kullanıcı bulunamadı."),
+                return RefreshIndicator(
+                  onRefresh: _refreshUserList,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height - 92,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: ((MediaQuery.of(context).size.height) *
+                                  2 /
+                                  6),
+                              child: Image.asset(
+                                "assets/images/userNotFound.png",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Text(
+                              "Sistemde kayıtlı kullanıcı bulunamadı.",
+                              style: TextStyle(fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               }
             } else {
@@ -183,5 +216,11 @@ class _UsersPageState extends State<UsersPage> {
             );
           }),
     );
+  }
+
+  Future<Null> _refreshUserList() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    setState(() {});
+    return null;
   }
 }

@@ -141,14 +141,43 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Stream<List<ChatModel>> getAllConversations(String currentUserID) {
-    var snapshots = _firestore
+  Future<List<ChatModel>> getAllConversations(String currentUserID) async {
+    QuerySnapshot _querySnapshot = await _firestore
         .collection("chats")
         .where("chatOwner", isEqualTo: currentUserID)
         .orderBy("createdAt", descending: true)
-        .snapshots();
+        .get();
 
-    return snapshots.map(
-        (list) => list.docs.map((c) => ChatModel.fromMap(c.data())).toList());
+    List<ChatModel> _allConversations = [];
+
+    for (DocumentSnapshot _singleMap in _querySnapshot.docs) {
+      ChatModel _single = ChatModel.fromMap(_singleMap.data());
+      _allConversations.add(_single);
+    }
+
+    return _allConversations;
+  }
+
+  Future<UserModel> getUser(String userID) async {
+    DocumentSnapshot _docSnapshot =
+        await _firestore.collection("users").doc(userID).get();
+    UserModel _user = UserModel.fromMap(_docSnapshot.data());
+    return _user;
+  }
+
+  @override
+  Future<DateTime> showTime(String userID) async {
+    await _firestore.collection("server").doc(userID).set(
+      {
+        "time": FieldValue.serverTimestamp(),
+      },
+    );
+
+    DocumentSnapshot _s =
+        await _firestore.collection("server").doc(userID).get();
+
+    Timestamp _data = _s.data()["time"];
+    print(_data);
+    return _data.toDate();
   }
 }

@@ -7,6 +7,9 @@ class ChatModel {
   final bool isRead;
   final String lastMessage;
   final Timestamp readedTime;
+  String chatUserUserName;
+  String chatUserProfilePhotoUrl;
+  DateTime lastSeenTime;
 
   ChatModel(this.chatOwner, this.chatUser, this.createdAt, this.isRead,
       this.lastMessage, this.readedTime);
@@ -32,6 +35,6 @@ class ChatModel {
 
   @override
   String toString() {
-    return 'ChatModel{chatOwner: $chatOwner, chatUser: $chatUser, createdAt: $createdAt, isRead: $isRead, lastMessage: $lastMessage, readedTime: $readedTime}';
+    return 'ChatModel{chatOwner: $chatOwner, chatUser: $chatUser, createdAt: $createdAt, isRead: $isRead, lastMessage: $lastMessage, readedTime: $readedTime, chatUserUserName: $chatUserUserName, chatUserProfilePhotoUrl: $chatUserProfilePhotoUrl}';
   }
 }

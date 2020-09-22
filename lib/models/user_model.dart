@@ -14,6 +14,9 @@ class UserModel {
 
   UserModel({@required this.userID, @required this.mail});
 
+  UserModel.forChatPage(
+      {this.userID, this.profilePhotoUrl, this.userName, this.mail});
+
   Map<String, dynamic> toMap() {
     return {
       'userID': userID,
