@@ -98,15 +98,13 @@ class _UsersPageState extends State<UsersPage> {
     return ListView.builder(
         itemCount: snapshot.data.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage:
-                    NetworkImage(snapshot.data[index].profilePhotoUrl),
-              ),
-              title: Text("@" + snapshot.data[index].userName.toString()),
-              subtitle: Text(snapshot.data[index].mail.toString()),
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundImage:
+                  NetworkImage(snapshot.data[index].profilePhotoUrl),
             ),
+            title: Text("@" + snapshot.data[index].userName.toString()),
+            subtitle: Text(snapshot.data[index].mail.toString()),
             onTap: () {
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(

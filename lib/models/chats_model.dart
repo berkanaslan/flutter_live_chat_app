@@ -10,6 +10,7 @@ class ChatModel {
   String chatUserUserName;
   String chatUserProfilePhotoUrl;
   DateTime lastSeenTime;
+  String timeDifference;
 
   ChatModel(this.chatOwner, this.chatUser, this.createdAt, this.isRead,
       this.lastMessage, this.readedTime);

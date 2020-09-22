@@ -30,33 +30,34 @@ class _ChatHistoryState extends State<ChatHistory> {
                 child: ListView.builder(
                     itemCount: future.data.length,
                     itemBuilder: (context, index) {
-                      return GestureDetector(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              future.data[index].chatUserProfilePhotoUrl,
-                            ),
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            future.data[index].chatUserProfilePhotoUrl,
                           ),
-                          title: Text(
-                            "@" + future.data[index].chatUserUserName,
-                          ),
-                          subtitle: future.data[index].lastMessage.length > 25
-                              ? Text(future.data[index].lastMessage
-                                      .substring(0, 25) +
-                                  "...")
-                              : Text(future.data[index].lastMessage),
                         ),
-                        onTap: () async {
-                          UserModel chatUserDetails = await _userViewModel
-                              .getUser(future.data[index].chatUser);
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                currentUser: _userViewModel.userModel,
-                                chatUser: chatUserDetails,
+                        title: Text(
+                          "@" + future.data[index].chatUserUserName,
+                        ),
+                        subtitle: future.data[index].lastMessage.length > 25
+                            ? Text(future.data[index].lastMessage
+                                    .substring(0, 25) +
+                                "...")
+                            : Text(future.data[index].lastMessage),
+                        trailing: Text(future.data[index].timeDifference),
+                        onTap: () {
+                          _userViewModel
+                              .getUser(future.data[index].chatUser)
+                              .then((value) {
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  currentUser: _userViewModel.userModel,
+                                  chatUser: value,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          });
                         },
                       );
                     }),

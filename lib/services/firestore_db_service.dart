@@ -177,7 +177,6 @@ class FirestoreDBService implements DBBase {
         await _firestore.collection("server").doc(userID).get();
 
     Timestamp _data = _s.data()["time"];
-    print(_data);
     return _data.toDate();
   }
 }

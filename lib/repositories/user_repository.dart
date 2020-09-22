@@ -10,6 +10,7 @@ import 'package:flutter_live_chat_app/services/fake_auth_service.dart';
 import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
 import 'package:flutter_live_chat_app/services/firebase_storage_service.dart';
 import 'package:flutter_live_chat_app/services/firestore_db_service.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 enum AppMode { DEBUG, RELEASE }
 
@@ -165,7 +166,6 @@ class UserRepository implements AuthBase {
           print("Konuşulan kişinin verileri local cache'den çağırıldı.");
           currentC.chatUserProfilePhotoUrl = userInUserList.profilePhotoUrl;
           currentC.chatUserUserName = userInUserList.userName;
-          currentC.lastSeenTime = time;
         } else {
           print("Konuşulan kişinin verileri veritabanından çağırıldı.");
           var userDetailsInDatabase =
@@ -173,8 +173,9 @@ class UserRepository implements AuthBase {
           currentC.chatUserProfilePhotoUrl =
               userDetailsInDatabase.profilePhotoUrl;
           currentC.chatUserUserName = userDetailsInDatabase.userName;
-          currentC.lastSeenTime = time;
         }
+
+        calculateTimeAgo(currentC, time);
       }
       return chatHistoryList;
     }
@@ -196,5 +197,14 @@ class UserRepository implements AuthBase {
     } else {
       return await _firestoreDBService.getUser(userID);
     }
+  }
+
+  void calculateTimeAgo(ChatModel currentC, DateTime time) {
+    currentC.lastSeenTime = time;
+    timeago.setLocaleMessages("tr", timeago.TrMessages());
+
+    var _duration = time.difference(currentC.createdAt.toDate());
+    currentC.timeDifference =
+        timeago.format(time.subtract(_duration), locale: "tr");
   }
 }

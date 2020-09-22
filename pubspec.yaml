@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^1.1.0
   bubble: ^1.1.9+1
   intl: ^0.16.1
+  timeago: ^2.0.27
 
 dev_dependencies:
   flutter_test:
