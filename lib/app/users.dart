@@ -87,7 +87,7 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   _buildUsersListView(UserViewModel userViewModel) {
-    if (_allUsers.length < 1) {
+    if (_allUsers.length > 1) {
       return RefreshIndicator(
         onRefresh: _refreshUsersList,
         child: ListView.builder(
