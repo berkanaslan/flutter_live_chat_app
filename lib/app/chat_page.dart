@@ -1,6 +1,7 @@
 import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_live_chat_app/app/profile_image_page.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -29,12 +30,38 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          alignment: Alignment.centerLeft,
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 16,
+          ),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.maybePop(context);
+          },
+        ),
+        titleSpacing: -20,
         title: ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-              widget.chatUser.profilePhotoUrl,
+          leading: GestureDetector(
+            child: Container(
+              child: Hero(
+                tag: 'profilePhoto',
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    widget.chatUser.profilePhotoUrl,
+                  ),
+                ),
+              ),
             ),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      ProfilePhotoDetail(user: widget.chatUser)));
+            },
           ),
           title: Text(
             "@" + widget.chatUser.userName,

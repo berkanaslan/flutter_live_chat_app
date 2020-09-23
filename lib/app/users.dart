@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -10,7 +11,27 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  bool _listTileType = true;
+  List<UserModel> _allUsers;
+  bool _isLoading = false;
+  bool _hasMore = true;
+  int _itemsPerPage = 15;
+  UserModel _calledLastUser;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      getUsers();
+    });
+    _scrollController.addListener(() {
+      if (_scrollController.offset >=
+              _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange) {
+        getUsers();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,98 +40,93 @@ class _UsersPageState extends State<UsersPage> {
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          title: Text("Sohbet"),
-          actions: [
-            IconButton(
-              color: Colors.white,
-              icon: _listTileType == true ? Icon(Icons.dns) : Icon(Icons.list),
-              onPressed: () {
-                if (_listTileType == true) {
-                  setState(() {
-                    _listTileType = false;
-                  });
-                } else {
-                  setState(() {
-                    _listTileType = true;
-                  });
-                }
-              },
-            ),
-          ],
+          title: Text("Kullanıcılar"),
         ),
-        body: FutureBuilder<List<UserModel>>(
-          future: _userViewModel.getAllUsers(_userViewModel.userModel.userID),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.length > 0) {
-                if (_listTileType) {
-                  return RefreshIndicator(
-                      onRefresh: _refreshUserList,
-                      child: buildListView(context, _userViewModel, snapshot));
-                } else {
-                  return RefreshIndicator(
-                    onRefresh: _refreshUserList,
-                    child: buildGridView(context, _userViewModel, snapshot),
-                  );
-                }
-              } else {
-                return RefreshIndicator(
-                  onRefresh: _refreshUserList,
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height - 92,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: ((MediaQuery.of(context).size.height) *
-                                  2 /
-                                  6),
-                              child: Image.asset(
-                                "assets/images/userNotFound.png",
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Text(
-                              "Sistemde kayıtlı kullanıcı bulunamadı.",
-                              style: TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ));
+        body: _allUsers == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : _buildUsersListView(_userViewModel));
   }
 
-  ListView buildListView(BuildContext context, UserViewModel userViewModel,
-      AsyncSnapshot<List<UserModel>> snapshot) {
+  getUsers() async {
+    final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
+
+    if (!_hasMore) {
+      print("Tüm kullanıcılar çağırıldığı için bu metot es geçilecek.");
+      return;
+    }
+    if (_isLoading) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<UserModel> _users = await _userViewModel.getAllUsersWithPagination(
+        _calledLastUser, _itemsPerPage);
+
+    if (_calledLastUser == null) {
+      _allUsers = [];
+      _allUsers.addAll(_users);
+    } else {
+      _allUsers.addAll(_users);
+    }
+
+    if (_users.length < _itemsPerPage) {
+      _hasMore = false;
+    }
+
+    _calledLastUser = _allUsers.last;
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _buildUsersListView(UserViewModel userViewModel) {
     return ListView.builder(
-        itemCount: snapshot.data.length,
+        controller: _scrollController,
+        itemCount: _allUsers.length + 1,
         itemBuilder: (context, index) {
+          if (index == _allUsers.length && index != 0) {
+            return _buildNewUsersCircularProgressIndicator();
+          }
+          if (_allUsers.length == 0) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: ((MediaQuery.of(context).size.height) * 2 / 6),
+                    child: Image.asset(
+                      "assets/images/userNotFound.png",
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  Text(
+                    "Sistemde kayıtlı kullanıcı bulunamadı.",
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
           return ListTile(
             leading: CircleAvatar(
-              backgroundImage:
-                  NetworkImage(snapshot.data[index].profilePhotoUrl),
+              backgroundImage: NetworkImage(_allUsers[index].profilePhotoUrl),
             ),
-            title: Text("@" + snapshot.data[index].userName.toString()),
-            subtitle: Text(snapshot.data[index].mail.toString()),
+            title: Text("@" + _allUsers[index].userName),
+            subtitle: Text(_allUsers[index].mail),
             onTap: () {
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
                   builder: (context) => ChatPage(
                     currentUser: userViewModel.userModel,
-                    chatUser: snapshot.data[index],
+                    chatUser: _allUsers[index],
                   ),
                 ),
               );
@@ -119,106 +135,15 @@ class _UsersPageState extends State<UsersPage> {
         });
   }
 
-  buildGridView(BuildContext context, UserViewModel userViewModel,
-      AsyncSnapshot<List<UserModel>> snapshot) {
-    double circleRadius = 96;
+  _buildNewUsersCircularProgressIndicator() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GridView.builder(
-          itemCount: snapshot.data.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              mainAxisSpacing: 10,
-              childAspectRatio: (12 / 6)),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      //  image: DecorationImage(
-                      //  image: NetworkImage("kapakfotografiUrl"),
-                      //  fit: BoxFit.cover,
-                      //  ),
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: circleRadius / 2.0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Card(
-                          margin: EdgeInsets.zero,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(0),
-                              topRight: Radius.circular(0),
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 48.0),
-                            child: Column(children: [
-                              Text(
-                                "@" + snapshot.data[index].userName.toString(),
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(snapshot.data[index].mail.toString()),
-                              Text(
-                                snapshot.data[index].createdAt.toString(),
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ]),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: circleRadius,
-                    height: circleRadius,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DecoratedBox(
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              snapshot.data[index].profilePhotoUrl,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              onTap: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      currentUser: userViewModel.userModel,
-                      chatUser: snapshot.data[index],
-                    ),
-                  ),
-                );
-              },
-            );
-          }),
+      padding: EdgeInsets.all(8),
+      child: Center(
+        child: Opacity(
+          opacity: _isLoading ? 1 : 0,
+          child: _isLoading ? CircularProgressIndicator() : null,
+        ),
+      ),
     );
-  }
-
-  Future<Null> _refreshUserList() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    setState(() {});
-    return null;
   }
 }

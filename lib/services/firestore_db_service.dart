@@ -67,21 +67,6 @@ class FirestoreDBService implements DBBase {
   }
 
   @override
-  Future<List<UserModel>> getAllUsers(String currentUserID) async {
-    QuerySnapshot _querySnapshot = await _firestore.collection("users").get();
-    List<UserModel> _allUsers = [];
-
-    for (DocumentSnapshot _singleUserMap in _querySnapshot.docs) {
-      UserModel _singleUser = UserModel.fromMap(_singleUserMap.data());
-      if (currentUserID != _singleUser.userID) {
-        _allUsers.add(_singleUser);
-      }
-    }
-
-    return _allUsers;
-  }
-
-  @override
   Stream<List<MessageModel>> getMessages(
       String currentUserID, String chatUserID) {
     var docID = currentUserID + "--" + chatUserID;
@@ -178,5 +163,36 @@ class FirestoreDBService implements DBBase {
 
     Timestamp _data = _s.data()["time"];
     return _data.toDate();
+  }
+
+  @override
+  Future<List<UserModel>> getAllUsersWithPagination(
+      UserModel calledLastUser, int itemsPerPage) async {
+    QuerySnapshot _querySnapshot;
+    List<UserModel> _allUsers = [];
+
+    if (calledLastUser == null) {
+      _querySnapshot = await _firestore
+          .collection("users")
+          .orderBy("userName")
+          .limit(itemsPerPage)
+          .get();
+    } else {
+      _querySnapshot = await _firestore
+          .collection("users")
+          .orderBy("userName")
+          .startAfter([calledLastUser.userName])
+          .limit(itemsPerPage)
+          .get();
+
+      await Future.delayed(Duration(seconds: 1));
+    }
+
+    for (DocumentSnapshot snap in _querySnapshot.docs) {
+      UserModel _singleUser = UserModel.fromMap(snap.data());
+      _allUsers.add(_singleUser);
+    }
+
+    return _allUsers;
   }
 }
