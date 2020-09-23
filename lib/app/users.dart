@@ -14,7 +14,7 @@ class _UsersPageState extends State<UsersPage> {
   List<UserModel> _allUsers;
   bool _isLoading = false;
   bool _hasMore = true;
-  int _itemsPerPage = 15;
+  int _itemsPerPage = 10;
   UserModel _calledLastUser;
   ScrollController _scrollController = ScrollController();
 
@@ -86,56 +86,76 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   _buildUsersListView(UserViewModel userViewModel) {
-    return ListView.builder(
-        controller: _scrollController,
-        itemCount: _allUsers.length + 1,
-        itemBuilder: (context, index) {
-          if (index == _allUsers.length && index != 0) {
-            return _buildNewUsersCircularProgressIndicator();
-          }
-          if (_allUsers.length == 0) {
-            return Center(
+    if (_allUsers.length > 1) {
+      return RefreshIndicator(
+        onRefresh: _refreshUsersList,
+        child: ListView.builder(
+          controller: _scrollController,
+          itemBuilder: (context, index) {
+            if (index == _allUsers.length) {
+              return _buildNewUsersCircularProgressIndicator();
+            }
+            return buildListTile(index, context, userViewModel);
+          },
+          itemCount: _allUsers.length + 1,
+        ),
+      );
+    } else {
+      return RefreshIndicator(
+        onRefresh: _refreshUsersList,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: ((MediaQuery.of(context).size.height) * 2 / 6),
-                    child: Image.asset(
-                      "assets/images/userNotFound.png",
-                      fit: BoxFit.contain,
-                    ),
+                children: <Widget>[
+                  Icon(
+                    Icons.supervised_user_circle,
+                    color: Theme.of(context).primaryColor,
+                    size: 120,
                   ),
                   Text(
-                    "Sistemde kayıtlı kullanıcı bulunamadı.",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+                    "Henüz Kullanıcı Yok",
+                    style: TextStyle(fontSize: 36),
+                  )
                 ],
               ),
-            );
-          }
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(_allUsers[index].profilePhotoUrl),
             ),
-            title: Text("@" + _allUsers[index].userName),
-            subtitle: Text(_allUsers[index].mail),
-            onTap: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                    currentUser: userViewModel.userModel,
-                    chatUser: _allUsers[index],
-                  ),
-                ),
-              );
-            },
-          );
-        });
+            height: MediaQuery.of(context).size.height - 150,
+          ),
+        ),
+      );
+    }
   }
 
-  _buildNewUsersCircularProgressIndicator() {
+  Widget buildListTile(
+      int index, BuildContext context, UserViewModel userViewModel) {
+    if (_allUsers[index].userID == userViewModel.userModel.userID) {
+      return Container();
+    }
+
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(_allUsers[index].profilePhotoUrl),
+      ),
+      title: Text("@" + _allUsers[index].userName),
+      subtitle: Text(_allUsers[index].mail),
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).push(
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              currentUser: userViewModel.userModel,
+              chatUser: _allUsers[index],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNewUsersCircularProgressIndicator() {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Center(
@@ -145,5 +165,11 @@ class _UsersPageState extends State<UsersPage> {
         ),
       ),
     );
+  }
+
+  Future<Null> _refreshUsersList() async {
+    _hasMore = true;
+    _calledLastUser = null;
+    getUsers();
   }
 }

@@ -190,7 +190,8 @@ class FirestoreDBService implements DBBase {
 
     for (DocumentSnapshot snap in _querySnapshot.docs) {
       UserModel _singleUser = UserModel.fromMap(snap.data());
-      _allUsers.add(_singleUser);
+        _allUsers.add(_singleUser);
+      
     }
 
     return _allUsers;

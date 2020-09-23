@@ -39,6 +39,7 @@ class _ProfilePhotoDetailState extends State<ProfilePhotoDetail> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           Hero(
             tag: 'profilePhoto',
@@ -46,8 +47,8 @@ class _ProfilePhotoDetailState extends State<ProfilePhotoDetail> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  width: 500,
-                  height: 500,
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.height / 2,
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: NetworkImage(widget.user.profilePhotoUrl),
@@ -56,54 +57,56 @@ class _ProfilePhotoDetailState extends State<ProfilePhotoDetail> {
               ),
             ),
           ),
-          Material(
-            borderRadius: BorderRadius.circular(10),
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width - 30,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              "@" + widget.user.userName,
-                              style: TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              widget.user.mail,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Divider(),
-                    FloatingActionButton(
-                      child: Center(child: Icon(Icons.message)),
-                      backgroundColor: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        Navigator.maybePop(context);
-                      },
-                    ),
-                  ],
+          Center(
+            child: Material(
+              borderRadius: BorderRadius.circular(10),
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 30,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "@" + widget.user.userName,
+                                style: TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                widget.user.mail,
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Divider(),
+                      FloatingActionButton(
+                        child: Center(child: Icon(Icons.message)),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          Navigator.maybePop(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
