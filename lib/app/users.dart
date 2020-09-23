@@ -56,6 +56,7 @@ class _UsersPageState extends State<UsersPage> {
       print("Tüm kullanıcılar çağırıldığı için bu metot es geçilecek.");
       return;
     }
+
     if (_isLoading) {
       return;
     }
@@ -86,10 +87,11 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   _buildUsersListView(UserViewModel userViewModel) {
-    if (_allUsers.length > 1) {
+    if (_allUsers.length < 1) {
       return RefreshIndicator(
         onRefresh: _refreshUsersList,
         child: ListView.builder(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: _scrollController,
           itemBuilder: (context, index) {
             if (index == _allUsers.length) {
@@ -106,24 +108,27 @@ class _UsersPageState extends State<UsersPage> {
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Container(
+            height: MediaQuery.of(context).size.height - 92,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.supervised_user_circle,
-                    color: Theme.of(context).primaryColor,
-                    size: 120,
+                children: [
+                  Container(
+                    height: ((MediaQuery.of(context).size.height) * 2 / 6),
+                    child: Image.asset(
+                      "assets/images/userNotFound.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   Text(
-                    "Henüz Kullanıcı Yok",
-                    style: TextStyle(fontSize: 36),
-                  )
+                    "Sistemde kayıtlı kullanıcı bulunamadı.",
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
-            height: MediaQuery.of(context).size.height - 150,
           ),
         ),
       );
