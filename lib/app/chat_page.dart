@@ -1,7 +1,6 @@
 import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_live_chat_app/common_widgets/custom_appbar.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
@@ -29,27 +28,22 @@ class _ChatPageState extends State<ChatPage> {
     final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        onImagetab: () {},
-        profilePic: Image.network(
-          chatUser.profilePhotoUrl,
-          height: 40,
-          width: 40,
-          fit: BoxFit.cover,
-        ),
-        username: "@" + chatUser.userName,
-        status: Text(
-          chatUser.mail,
-          style: TextStyle(color: Colors.white),
-        ),
-        color: Theme.of(context).primaryColor,
-        backButtonColor: Colors.white,
-        backbutton: IconButton(
-          icon: Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          color: Colors.white,
+      appBar: AppBar(
+        title: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(
+              widget.chatUser.profilePhotoUrl,
+            ),
+          ),
+          title: Text(
+            "@" + widget.chatUser.userName,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            widget.chatUser.mail,
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
       body: Center(
