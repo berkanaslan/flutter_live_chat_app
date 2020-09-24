@@ -206,8 +206,11 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return [];
     } else {
-      return await _firestoreDBService.getAllUsersWithPagination(
-          calledLastUser, itemsPerPage);
+      List<UserModel> _userList = await _firestoreDBService
+          .getAllUsersWithPagination(calledLastUser, itemsPerPage);
+      allUsersList.addAll(_userList);
+
+      return _userList;
     }
   }
 }

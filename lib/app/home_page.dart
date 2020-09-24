@@ -5,6 +5,8 @@ import 'package:flutter_live_chat_app/app/profile.dart';
 import 'package:flutter_live_chat_app/app/tab_items.dart';
 import 'package:flutter_live_chat_app/app/users.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
+import 'package:flutter_live_chat_app/view_models/all_users_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final UserModel userModel;
@@ -25,7 +27,10 @@ class _HomePageState extends State<HomePage> {
 
   Map<TabItem, Widget> allPages() {
     return {
-      TabItem.AllUsers: UsersPage(),
+      TabItem.AllUsers: ChangeNotifierProvider(
+        create: (context) => AllUsersViewModel(),
+        child: UsersPage(),
+      ),
       TabItem.ChatHistory: ChatHistory(),
       TabItem.Profile: ProfilePage(),
     };
