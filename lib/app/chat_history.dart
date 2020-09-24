@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/chat_page.dart';
 import 'package:flutter_live_chat_app/models/chats_model.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
+import 'package:flutter_live_chat_app/view_models/chat_view_model.dart';
 import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -48,15 +49,19 @@ class _ChatHistoryState extends State<ChatHistory> {
                         onTap: () {
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                currentUser: _userViewModel.userModel,
-                                chatUser: UserModel.forChatPage(
-                                    userID: future.data[index].chatUser,
-                                    profilePhotoUrl: future
-                                        .data[index].chatUserProfilePhotoUrl,
-                                    userName:
-                                        future.data[index].chatUserUserName,
-                                    mail: future.data[index].chatUserMail),
+                              builder: (context) =>
+                                  ChangeNotifierProvider<ChatViewModel>(
+                                create: (context) => ChatViewModel(
+                                  currentUser: _userViewModel.userModel,
+                                  chatUser: UserModel.forChatPage(
+                                      userID: future.data[index].chatUser,
+                                      profilePhotoUrl: future
+                                          .data[index].chatUserProfilePhotoUrl,
+                                      userName:
+                                          future.data[index].chatUserUserName,
+                                      mail: future.data[index].chatUserMail),
+                                ),
+                                child: ChatPage(),
                               ),
                             ),
                           );

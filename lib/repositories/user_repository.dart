@@ -213,4 +213,17 @@ class UserRepository implements AuthBase {
       return _userList;
     }
   }
+
+  Future<List<MessageModel>> getMessagesWithPagination(
+      String currentUserID,
+      String chatUserID,
+      MessageModel lastCalledMessage,
+      int itemsPerPage) async {
+    if (appMode == AppMode.DEBUG) {
+      return [];
+    } else {
+      return await _firestoreDBService.getMessagesWithPagination(
+          currentUserID, chatUserID, lastCalledMessage, itemsPerPage);
+    }
+  }
 }

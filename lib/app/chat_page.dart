@@ -3,17 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/profile_image_page.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
-import 'package:flutter_live_chat_app/models/user_model.dart';
-import 'package:flutter_live_chat_app/view_models/user_view_model.dart';
+import 'package:flutter_live_chat_app/view_models/chat_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final UserModel currentUser;
-  final UserModel chatUser;
-
-  const ChatPage({Key key, this.currentUser, this.chatUser}) : super(key: key);
-
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -21,192 +15,204 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   var _messageController = TextEditingController();
   ScrollController _scrollController = ScrollController();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_listScrollListener);
+  }
 
   @override
   Widget build(BuildContext context) {
-    UserModel currentUser = widget.currentUser;
-    UserModel chatUser = widget.chatUser;
-    final _userViewModel = Provider.of<UserViewModel>(context, listen: true);
+    final _chatViewModel = Provider.of<ChatViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          alignment: Alignment.centerLeft,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 16,
+        appBar: AppBar(
+          leading: IconButton(
+            alignment: Alignment.centerLeft,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 16,
+            ),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.maybePop(context);
+            },
           ),
-          color: Colors.white,
-          onPressed: () {
-            Navigator.maybePop(context);
-          },
-        ),
-        titleSpacing: -20,
-        title: ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: GestureDetector(
-            child: Container(
-              child: Hero(
-                tag: 'profilePhoto',
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    widget.chatUser.profilePhotoUrl,
+          titleSpacing: -20,
+          title: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: GestureDetector(
+              child: Container(
+                child: Hero(
+                  tag: 'profilePhoto',
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      _chatViewModel.chatUser.profilePhotoUrl,
+                    ),
                   ),
                 ),
               ),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        ProfilePhotoDetail(user: _chatViewModel.chatUser)));
+              },
             ),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      ProfilePhotoDetail(user: widget.chatUser)));
-            },
-          ),
-          title: Text(
-            "@" + widget.chatUser.userName,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            widget.chatUser.mail,
-            style: TextStyle(color: Colors.white),
+            title: Text(
+              "@" + _chatViewModel.chatUser.userName,
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              _chatViewModel.chatUser.mail,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<List<MessageModel>>(
-                stream: _userViewModel.getMessages(
-                    currentUser.userID, chatUser.userID),
-                builder: (context, streamMesssageList) {
-                  if (!streamMesssageList.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+        body: _chatViewModel.state == ChatViewState.Busy
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Center(
+                child: Column(
+                  children: [
+                    buildMessageList(),
+                    buildMessageInputArea(),
+                  ],
+                ),
+              ));
+  }
 
-                  List<MessageModel> allMessages = streamMesssageList.data;
+  Widget buildMessageList() {
+    return Consumer<ChatViewModel>(builder: (context, model, child) {
+      if (model.allMessages.length > 0) {
+        return Expanded(
+          child: ListView.builder(
+            reverse: true,
+            controller: _scrollController,
+            itemCount: model.hasMore
+                ? model.allMessages.length + 1
+                : model.allMessages.length,
+            itemBuilder: (context, index) {
+              if (model.hasMore && model.allMessages.length == index) {
+                return _buildOldMessagesCircularProgressIndicator();
+              }
 
-                  if (allMessages.length > 0) {
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: allMessages.length,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          var _dateyMd =
-                              _formatDateyMd(allMessages[index].date);
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Bubble(
-                                  alignment: Alignment.center,
-                                  color: Color.fromRGBO(212, 234, 244, 1.0),
-                                  child: Text(_dateyMd.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 11.0)),
-                                ),
-                              ),
-                              _buildMessageBalloon(allMessages[index]),
-                            ],
-                          );
-                        } else {
-                          var _dateyMd =
-                              _formatDateyMd(allMessages[index].date);
-                          var _prevDateyMd =
-                              _formatDateyMd(allMessages[index - 1].date);
-
-                          if (_dateyMd == _prevDateyMd) {
-                            return _buildMessageBalloon(allMessages[index]);
-                          } else {
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Bubble(
-                                    alignment: Alignment.center,
-                                    color: Color.fromRGBO(212, 234, 244, 1.0),
-                                    child: Text(_dateyMd.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 11.0)),
-                                  ),
-                                ),
-                                _buildMessageBalloon(allMessages[index]),
-                              ],
-                            );
-                          }
-                        }
-                      },
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.only(bottom: 8, left: 8),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      cursorColor: Theme.of(context).primaryColor,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
+              if (index == 0) {
+                var _dateyMd = _formatDateyMd(model.allMessages[index].date);
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Bubble(
+                        alignment: Alignment.center,
+                        color: Color.fromRGBO(212, 234, 244, 1.0),
+                        child: Text(_dateyMd.toString(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 11.0)),
                       ),
-                      decoration: InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: "Bir mesaj yazın",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
+                    ),
+                    _buildMessageBalloon(model.allMessages[index]),
+                  ],
+                );
+              } else {
+                var _dateyMd = _formatDateyMd(model.allMessages[index].date);
+                var _prevDateyMd =
+                    _formatDateyMd(model.allMessages[index - 1].date);
+
+                if (_dateyMd == _prevDateyMd) {
+                  return _buildMessageBalloon(model.allMessages[index]);
+                } else {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Bubble(
+                          alignment: Alignment.center,
+                          color: Color.fromRGBO(212, 234, 244, 1.0),
+                          child: Text(_dateyMd.toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 11.0)),
                         ),
                       ),
-                    ),
-                  ),
-                  Container(
-                    height: 48,
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    child: FloatingActionButton(
-                      child: Icon(
-                        Icons.send,
-                        size: 24,
-                        color: Colors.white,
-                      ),
-                      onPressed: () async {
-                        if (_messageController.text.trim().length > 0) {
-                          MessageModel _sendingMessage = MessageModel(
-                            fromWho: currentUser.userID,
-                            toWho: chatUser.userID,
-                            isFromMe: true,
-                            message: _messageController.text,
-                          );
+                      _buildMessageBalloon(model.allMessages[index]),
+                    ],
+                  );
+                }
+              }
+            },
+          ),
+        );
+      } else {
+        return Container();
+      }
+    });
+  }
 
-                          _messageController.clear();
+  Widget buildMessageInputArea() {
+    final _chatViewModel = Provider.of<ChatViewModel>(context);
 
-                          var _result =
-                              await _userViewModel.sendMessage(_sendingMessage);
-
-                          if (_result) {
-                            _scrollController.animateTo(
-                                _scrollController.position.maxScrollExtent,
-                                duration: Duration(milliseconds: 50),
-                                curve: Curves.easeInCubic);
-                          }
-                        }
-                      },
-                    ),
-                  ),
-                ],
+    return Container(
+      padding: EdgeInsets.only(bottom: 8, left: 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              cursorColor: Theme.of(context).primaryColor,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
+              decoration: InputDecoration(
+                fillColor: Colors.white,
+                filled: true,
+                hintText: "Bir mesaj yazın",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          Container(
+            height: 48,
+            margin: EdgeInsets.symmetric(horizontal: 4),
+            child: FloatingActionButton(
+              child: Icon(
+                Icons.send,
+                size: 24,
+                color: Colors.white,
+              ),
+              onPressed: () async {
+                if (_messageController.text.trim().length > 0) {
+                  MessageModel _sendingMessage = MessageModel(
+                    fromWho: _chatViewModel.currentUser.userID,
+                    toWho: _chatViewModel.chatUser.userID,
+                    isFromMe: true,
+                    message: _messageController.text,
+                  );
+
+                  _messageController.clear();
+
+                  var _result =
+                      await _chatViewModel.sendMessage(_sendingMessage);
+
+                  if (_result) {
+                    _scrollController.animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: Duration(milliseconds: 50),
+                        curve: Curves.easeInCubic);
+                  }
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -273,5 +279,31 @@ class _ChatPageState extends State<ChatPage> {
     var _formatter = dateFormat;
     var _formattedDate = _formatter.format(date.toDate());
     return _formattedDate;
+  }
+
+  void _listScrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      getMoreOldMessages();
+    }
+  }
+
+  void getMoreOldMessages() async {
+    final _chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    if (_isLoading == false) {
+      _isLoading = true;
+      await _chatViewModel.getMoreOldMessages();
+      _isLoading = false;
+    }
+  }
+
+  Widget _buildOldMessagesCircularProgressIndicator() {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 }

@@ -190,10 +190,47 @@ class FirestoreDBService implements DBBase {
 
     for (DocumentSnapshot snap in _querySnapshot.docs) {
       UserModel _singleUser = UserModel.fromMap(snap.data());
-        _allUsers.add(_singleUser);
-      
+      _allUsers.add(_singleUser);
     }
 
     return _allUsers;
+  }
+
+  Future<List<MessageModel>> getMessagesWithPagination(
+      String currentUserID,
+      String chatUserID,
+      MessageModel lastCalledMessage,
+      int itemsPerPage) async {
+    QuerySnapshot _querySnapshot;
+    List<MessageModel> _allMessages = [];
+    var docID = currentUserID + "--" + chatUserID;
+
+    if (lastCalledMessage == null) {
+      _querySnapshot = await _firestore
+          .collection("chats")
+          .doc(docID)
+          .collection("messages")
+          .orderBy("date", descending: true)
+          .limit(itemsPerPage)
+          .get();
+    } else {
+      _querySnapshot = await _firestore
+          .collection("chats")
+          .doc(docID)
+          .collection("messages")
+          .orderBy("date", descending: true)
+          .startAfter([lastCalledMessage.date])
+          .limit(itemsPerPage)
+          .get();
+
+      await Future.delayed(Duration(seconds: 1));
+    }
+
+    for (DocumentSnapshot snap in _querySnapshot.docs) {
+      MessageModel _singleMessage = MessageModel.fromMap(snap.data());
+      _allMessages.add(_singleMessage);
+    }
+
+    return _allMessages;
   }
 }
