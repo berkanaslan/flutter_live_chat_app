@@ -89,30 +89,22 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildMessageList() {
     return Consumer<ChatViewModel>(builder: (context, model, child) {
-      if (model.allMessages.length > 0) {
-        return Expanded(
-          child: ListView.builder(
-            reverse: true,
-            controller: _scrollController,
-            itemCount: model.hasMore
-                ? model.allMessages.length + 1
-                : model.allMessages.length,
-            itemBuilder: (context, index) {
-              if (model.hasMore && model.allMessages.length == index) {
-                return _buildOldMessagesCircularProgressIndicator();
-              }
-
-              if (index == 0) {
-                return _buildMessageBalloon(model.allMessages[index]);
-              } else {
-                return _buildMessageBalloon(model.allMessages[index]);
-              }
-            },
-          ),
-        );
-      } else {
-        return Container();
-      }
+      return Expanded(
+        child: ListView.builder(
+          reverse: true,
+          controller: _scrollController,
+          itemCount: model.hasMore
+              ? model.allMessages.length + 1
+              : model.allMessages.length,
+          itemBuilder: (context, index) {
+            if (model.hasMore && model.allMessages.length == index) {
+              return _buildOldMessagesCircularProgressIndicator();
+            } else {
+              return _buildMessageBalloon(model.allMessages[index]);
+            }
+          },
+        ),
+      );
     });
   }
 
@@ -166,8 +158,7 @@ class _ChatPageState extends State<ChatPage> {
                       await _chatViewModel.sendMessage(_sendingMessage);
 
                   if (_result) {
-                    _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
+                    _scrollController.animateTo(0,
                         duration: Duration(milliseconds: 50),
                         curve: Curves.easeInCubic);
                   }

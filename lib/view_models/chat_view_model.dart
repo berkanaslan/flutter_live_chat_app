@@ -13,8 +13,10 @@ class ChatViewModel with ChangeNotifier {
   final UserModel currentUser;
   final UserModel chatUser;
   static final itemsPerPage = 15;
+  MessageModel _firstIndexInMessageList;
   MessageModel _lastCalledMessage;
   bool _hasMore = true;
+  bool _newMessageListener = false;
 
   List<MessageModel> get allMessages => _allMessages;
   ChatViewState get state => _state;
@@ -35,7 +37,7 @@ class ChatViewModel with ChangeNotifier {
   }
 
   void getMessagesWithPagination(bool newMessagesIsComing) async {
-    if (_allMessages.length > 1) {
+    if (_allMessages.length > 0) {
       _lastCalledMessage = allMessages.last;
     }
 
@@ -53,7 +55,17 @@ class ChatViewModel with ChangeNotifier {
         (element) => print("Getirilen mesaj: " + element.message.toString()));
 
     _allMessages.addAll(_calledMessages);
+    if (_allMessages.length > 0) {
+      _firstIndexInMessageList = _allMessages.first;
+      print("Listeye eklenen ilk mesaj:" + _firstIndexInMessageList.message);
+    }
     state = ChatViewState.Loaded;
+
+    if (_newMessageListener == false) {
+      _newMessageListener = true;
+      print("Yeni mesajın gösterilmesi için listener yok, yeni atanacak.");
+      addNewMessageListener();
+    }
   }
 
   getMoreOldMessages() async {
@@ -64,5 +76,27 @@ class ChatViewModel with ChangeNotifier {
     } else {
       print("Daha fazla kullanıcı olmadığı için getMoreUser() çağırılmayacak.");
     }
+  }
+
+  addNewMessageListener() {
+    print("Yeni mesajın gösterilmesi için listener atandı.");
+    _userRepository
+        .getMessages(currentUser.userID, chatUser.userID)
+        .listen((newMessage) {
+      if (newMessage.isNotEmpty) {
+        print("Listener tetiklendi ve son getirilen mesaj: " +
+            newMessage[0].toString());
+
+        if (newMessage[0].date != null) {
+          if (_firstIndexInMessageList == null) {
+            _allMessages.insert(0, newMessage[0]);
+          } else if (_firstIndexInMessageList.date.millisecondsSinceEpoch !=
+              newMessage[0].date.millisecondsSinceEpoch) {
+            _allMessages.insert(0, newMessage[0]);
+          }
+        }
+        state = ChatViewState.Loaded;
+      }
+    });
   }
 }

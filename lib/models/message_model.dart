@@ -25,7 +25,7 @@ class MessageModel {
         toWho = map['toWho'],
         isFromMe = map['isFromMe'],
         message = map['message'],
-        date = map['date'] ?? Timestamp.now();
+        date = map['date'];
 
   @override
   String toString() {
