@@ -103,46 +103,9 @@ class _ChatPageState extends State<ChatPage> {
               }
 
               if (index == 0) {
-                var _dateyMd = _formatDateyMd(model.allMessages[index].date);
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Bubble(
-                        alignment: Alignment.center,
-                        color: Color.fromRGBO(212, 234, 244, 1.0),
-                        child: Text(_dateyMd.toString(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 11.0)),
-                      ),
-                    ),
-                    _buildMessageBalloon(model.allMessages[index]),
-                  ],
-                );
+                return _buildMessageBalloon(model.allMessages[index]);
               } else {
-                var _dateyMd = _formatDateyMd(model.allMessages[index].date);
-                var _prevDateyMd =
-                    _formatDateyMd(model.allMessages[index - 1].date);
-
-                if (_dateyMd == _prevDateyMd) {
-                  return _buildMessageBalloon(model.allMessages[index]);
-                } else {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Bubble(
-                          alignment: Alignment.center,
-                          color: Color.fromRGBO(212, 234, 244, 1.0),
-                          child: Text(_dateyMd.toString(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 11.0)),
-                        ),
-                      ),
-                      _buildMessageBalloon(model.allMessages[index]),
-                    ],
-                  );
-                }
+                return _buildMessageBalloon(model.allMessages[index]);
               }
             },
           ),
@@ -269,13 +232,6 @@ class _ChatPageState extends State<ChatPage> {
 
   String _formatDateHm(Timestamp date) {
     var dateFormat = DateFormat.Hm();
-    var _formatter = dateFormat;
-    var _formattedDate = _formatter.format(date.toDate());
-    return _formattedDate;
-  }
-
-  String _formatDateyMd(Timestamp date) {
-    var dateFormat = DateFormat.yMd();
     var _formatter = dateFormat;
     var _formattedDate = _formatter.format(date.toDate());
     return _formattedDate;
