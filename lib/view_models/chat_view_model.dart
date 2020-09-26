@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_live_chat_app/locator.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
@@ -17,6 +19,7 @@ class ChatViewModel with ChangeNotifier {
   MessageModel _lastCalledMessage;
   bool _hasMore = true;
   bool _newMessageListener = false;
+  StreamSubscription _streamSubscription;
 
   List<MessageModel> get allMessages => _allMessages;
   ChatViewState get state => _state;
@@ -25,6 +28,12 @@ class ChatViewModel with ChangeNotifier {
   set state(ChatViewState value) {
     _state = value;
     notifyListeners();
+  }
+
+  @override
+  dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   ChatViewModel({this.currentUser, this.chatUser}) {
@@ -51,26 +60,20 @@ class ChatViewModel with ChangeNotifier {
       _hasMore = false;
     }
 
-    _calledMessages.forEach(
-        (element) => print("Getirilen mesaj: " + element.message.toString()));
-
     _allMessages.addAll(_calledMessages);
     if (_allMessages.length > 0) {
       _firstIndexInMessageList = _allMessages.first;
-      print("Listeye eklenen ilk mesaj:" + _firstIndexInMessageList.message);
     }
     state = ChatViewState.Loaded;
 
     if (_newMessageListener == false) {
       _newMessageListener = true;
-      print("Yeni mesajın gösterilmesi için listener yok, yeni atanacak.");
       addNewMessageListener();
     }
   }
 
   getMoreOldMessages() async {
     await Future.delayed(Duration(seconds: 1));
-    print("getMoreOldMessages() tetiklendi. ChatViewModel");
     if (_hasMore) {
       getMessagesWithPagination(true);
     } else {
@@ -79,14 +82,10 @@ class ChatViewModel with ChangeNotifier {
   }
 
   addNewMessageListener() {
-    print("Yeni mesajın gösterilmesi için listener atandı.");
-    _userRepository
+    _streamSubscription = _userRepository
         .getMessages(currentUser.userID, chatUser.userID)
         .listen((newMessage) {
       if (newMessage.isNotEmpty) {
-        print("Listener tetiklendi ve son getirilen mesaj: " +
-            newMessage[0].toString());
-
         if (newMessage[0].date != null) {
           if (_firstIndexInMessageList == null) {
             _allMessages.insert(0, newMessage[0]);
