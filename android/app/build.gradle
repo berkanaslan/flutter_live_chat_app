@@ -30,6 +30,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     // add SDKs for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+      implementation 'com.google.firebase:firebase-messaging:20.2.4'
+
 }
 
 android {
