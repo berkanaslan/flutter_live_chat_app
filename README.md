@@ -1,6 +1,6 @@
-# flutter_live_chat_app
+# live_chat
 
-A new Flutter live chat application with Firebase.
+Flutter live chat using Firebase.
 
 ## Getting Started
 
