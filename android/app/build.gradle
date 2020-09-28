@@ -39,7 +39,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.berkanaslan.flutter_live_chat_app"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         ndkVersion "21.3.6528147"
         multiDexEnabled true

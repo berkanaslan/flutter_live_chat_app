@@ -1,9 +1,11 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/chat_history.dart';
 import 'package:flutter_live_chat_app/app/my_custom_bottom_navi_bar.dart';
 import 'package:flutter_live_chat_app/app/profile.dart';
 import 'package:flutter_live_chat_app/app/tab_items.dart';
 import 'package:flutter_live_chat_app/app/users.dart';
+import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/models/user_model.dart';
 import 'package:flutter_live_chat_app/view_models/all_users_view_model.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.AllUsers;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
     TabItem.AllUsers: GlobalKey<NavigatorState>(),
@@ -34,6 +37,30 @@ class _HomePageState extends State<HomePage> {
       TabItem.ChatHistory: ChatHistory(),
       TabItem.Profile: ProfilePage(),
     };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _firebaseMessaging.subscribeToTopic("genel");
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage tetiklendi: $message");
+        PlatformAlertDialog(
+                title: message["data"]["title"],
+                message: message["data"]["message"],
+                mainActionText: "Tamam")
+            .show(context);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch tetiklendi: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume tetiklendi: $message");
+      },
+    );
   }
 
   @override

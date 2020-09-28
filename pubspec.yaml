@@ -40,6 +40,8 @@ dependencies:
   bubble: ^1.1.9+1
   intl: ^0.16.1
   timeago: ^2.0.27
+  firebase_messaging: ^7.0.0
+  flutter_local_notifications: ^1.4.4+4
 
 dev_dependencies:
   flutter_test:
