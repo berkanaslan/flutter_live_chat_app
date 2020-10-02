@@ -117,7 +117,7 @@ class _UsersPageState extends State<UsersPage> {
       ),
       title: Text(
         "@" + _currentUser.userName,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(_currentUser.mail),
       onTap: () {

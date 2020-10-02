@@ -44,7 +44,8 @@ class _ChatHistoryState extends State<ChatHistory> {
                         ),
                         title: Text(
                           "@" + future.data[index].chatUserUserName,
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         subtitle: future.data[index].lastMessage.length > 25
                             ? Text(future.data[index].lastMessage

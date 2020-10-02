@@ -205,16 +205,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _newProfilePhotoFromCamera() async {
     final image = await ImagePicker().getImage(source: ImageSource.camera);
-    setState(() {
-      _profilePhoto = File(image.path);
-    });
+    if (image != null) {
+      setState(() {
+        _profilePhoto = File(image.path);
+      });
+    }
   }
 
   void _newProfilePhotoFromGallery() async {
     final image = await ImagePicker().getImage(source: ImageSource.gallery);
-    setState(() {
-      _profilePhoto = File(image.path);
-    });
+    if (image != null) {
+      setState(() {
+        _profilePhoto = File(image.path);
+      });
+    }
   }
 
   void _updateProfilePhoto(BuildContext context) async {
