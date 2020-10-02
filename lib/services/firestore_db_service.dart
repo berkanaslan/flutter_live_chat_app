@@ -46,7 +46,7 @@ class FirestoreDBService implements DBBase {
     }
   }
 
- Future<bool> updateProfilePhoto(String userID, String profilePhotoUrl) async {
+  Future<bool> updateProfilePhoto(String userID, String profilePhotoUrl) async {
     await _firestore
         .collection('users')
         .doc(userID)
@@ -107,6 +107,7 @@ class FirestoreDBService implements DBBase {
     });
 
     _sendingMessageMap.update("isFromMe", (value) => false);
+    _sendingMessageMap.update("chatOwner", (value) => sendingMessage.toWho);
 
     await _firestore
         .collection("chats")
@@ -212,6 +213,7 @@ class FirestoreDBService implements DBBase {
           .collection("chats")
           .doc(docID)
           .collection("messages")
+          .where("chatOwner", isEqualTo: currentUserID)
           .orderBy("date", descending: true)
           .limit(itemsPerPage)
           .get();
@@ -220,6 +222,7 @@ class FirestoreDBService implements DBBase {
           .collection("chats")
           .doc(docID)
           .collection("messages")
+          .where("chatOwner", isEqualTo: currentUserID)
           .orderBy("date", descending: true)
           .startAfter([lastCalledMessage.date])
           .limit(itemsPerPage)

@@ -5,10 +5,16 @@ class MessageModel {
   final String toWho;
   final bool isFromMe;
   final String message;
+  final String chatOwner;
   final Timestamp date;
 
   MessageModel(
-      {this.fromWho, this.toWho, this.isFromMe, this.message, this.date});
+      {this.fromWho,
+      this.toWho,
+      this.isFromMe,
+      this.message,
+      this.chatOwner,
+      this.date});
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,6 +22,7 @@ class MessageModel {
       'toWho': toWho,
       'isFromMe': isFromMe,
       'message': message,
+      'chatOwner': chatOwner,
       'date': date ?? FieldValue.serverTimestamp(),
     };
   }
@@ -25,10 +32,11 @@ class MessageModel {
         toWho = map['toWho'],
         isFromMe = map['isFromMe'],
         message = map['message'],
+        chatOwner = map['chatOwner'],
         date = map['date'];
 
   @override
   String toString() {
-    return 'MessageModel{fromWho: $fromWho, toWho: $toWho, isFromMe: $isFromMe, message: $message, date: $date}';
+    return 'MessageModel{fromWho: $fromWho, toWho: $toWho, isFromMe: $isFromMe, message: $message, chatOwner: $chatOwner date: $date}';
   }
 }

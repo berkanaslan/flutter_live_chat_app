@@ -197,6 +197,7 @@ class _ChatPageState extends State<ChatPage> {
                     toWho: _chatViewModel.chatUser.userID,
                     isFromMe: true,
                     message: _messageController.text,
+                    chatOwner: _chatViewModel.currentUser.userID 
                   );
 
                   _messageController.clear();
