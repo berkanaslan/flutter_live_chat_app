@@ -22,18 +22,18 @@ class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.AllUsers;
 
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
-    TabItem.AllUsers: GlobalKey<NavigatorState>(),
     TabItem.ChatHistory: GlobalKey<NavigatorState>(),
+    TabItem.AllUsers: GlobalKey<NavigatorState>(),
     TabItem.Profile: GlobalKey<NavigatorState>(),
   };
 
   Map<TabItem, Widget> allPages() {
     return {
+      TabItem.ChatHistory: ChatHistory(),
       TabItem.AllUsers: ChangeNotifierProvider(
         create: (context) => AllUsersViewModel(),
         child: UsersPage(),
       ),
-      TabItem.ChatHistory: ChatHistory(),
       TabItem.Profile: ProfilePage(),
     };
   }

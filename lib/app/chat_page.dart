@@ -36,6 +36,7 @@ class _ChatPageState extends State<ChatPage> {
             icon: Icon(
               Icons.arrow_back_ios,
               size: 16,
+              color: Color(0xFFF2F6FA),
             ),
             color: Colors.white,
             onPressed: () {
@@ -64,12 +65,14 @@ class _ChatPageState extends State<ChatPage> {
             ),
             title: Text(
               "@" + _chatViewModel.chatUser.userName,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Color(0xFFF2F6FA),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14),
             ),
             subtitle: Text(
               _chatViewModel.chatUser.mail,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Color(0xFFF2F6FA), fontSize: 12),
             ),
           ),
         ),
@@ -137,11 +140,13 @@ class _ChatPageState extends State<ChatPage> {
           Container(
             height: 48,
             margin: EdgeInsets.symmetric(horizontal: 4),
-            child: FloatingActionButton(
-              child: Icon(
+            child: IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              icon: Icon(
                 Icons.send,
                 size: 24,
-                color: Colors.white,
+                color: Color(0xFF414651),
               ),
               onPressed: () async {
                 if (_messageController.text.trim().length > 0) {
@@ -154,8 +159,8 @@ class _ChatPageState extends State<ChatPage> {
 
                   _messageController.clear();
 
-                  var _result =
-                      await _chatViewModel.sendMessage(_sendingMessage);
+                  var _result = await _chatViewModel.sendMessage(
+                      _sendingMessage, _chatViewModel.currentUser);
 
                   if (_result) {
                     _scrollController.animateTo(0,
@@ -176,48 +181,55 @@ class _ChatPageState extends State<ChatPage> {
     var _dateHm = _formatDateHm(currentMessage.date);
 
     return _myMessage == true
-        ? Bubble(
-            margin: BubbleEdges.all(5),
-            alignment: Alignment.topRight,
-            nipWidth: 8,
-            nipHeight: 24,
-            nip: BubbleNip.rightTop,
-            color: Color.fromRGBO(225, 255, 199, 1.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(currentMessage.message, textAlign: TextAlign.right),
-                SizedBox(
-                  height: 5,
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Bubble(
+                stick: true,
+                margin: BubbleEdges.all(5),
+                alignment: Alignment.topRight,
+                nip: BubbleNip.no,
+                color: Colors.teal,
+                child: Text(
+                  currentMessage.message,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: Colors.white),
                 ),
-                Text(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(
                   _dateHm.toString(),
                   textAlign: TextAlign.right,
                   style: TextStyle(color: Colors.grey, fontSize: 11),
                 ),
-              ],
-            ),
+              ),
+            ],
           )
-        : Bubble(
-            margin: BubbleEdges.all(5),
-            alignment: Alignment.topLeft,
-            nipWidth: 8,
-            nipHeight: 24,
-            nip: BubbleNip.leftTop,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(currentMessage.message, textAlign: TextAlign.right),
-                SizedBox(
-                  height: 5,
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Bubble(
+                stick: true,
+                margin: BubbleEdges.all(5),
+                alignment: Alignment.topLeft,
+                nip: BubbleNip.no,
+                color: Colors.white,
+                child: Text(
+                  currentMessage.message,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: Colors.black),
                 ),
-                Text(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
                   _dateHm.toString(),
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.right,
                   style: TextStyle(color: Colors.grey, fontSize: 11),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
   }
 

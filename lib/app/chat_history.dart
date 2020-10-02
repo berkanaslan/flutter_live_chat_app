@@ -17,8 +17,13 @@ class _ChatHistoryState extends State<ChatHistory> {
     UserViewModel _userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text("Konuşmalarım"),
+        title: Text(
+          "Konuşmalarım",
+          style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFFF2F6FA),
+          ),
+        ),
       ),
       body: FutureBuilder<List<ChatModel>>(
         future:
@@ -39,6 +44,7 @@ class _ChatHistoryState extends State<ChatHistory> {
                         ),
                         title: Text(
                           "@" + future.data[index].chatUserUserName,
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         subtitle: future.data[index].lastMessage.length > 25
                             ? Text(future.data[index].lastMessage

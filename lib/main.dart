@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.deepPurple,
+    statusBarColor: Colors.teal,
     statusBarIconBrightness: Brightness.light,
   ));
 
@@ -33,8 +33,15 @@ class RunApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Live Chat',
         theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-          textTheme: GoogleFonts.robotoTextTheme(),
+          appBarTheme: AppBarTheme(
+            //  color: Color(0xFFF2F6FA),
+            elevation: 0,
+            textTheme: GoogleFonts.poppinsTextTheme(),
+          ),
+          primarySwatch: Colors.teal,
+          canvasColor: Color(0xFFF2F6FA),
+          cardColor: Colors.white,
+          textTheme: GoogleFonts.poppinsTextTheme(),
         ),
         home: LandingPage(),
       ),

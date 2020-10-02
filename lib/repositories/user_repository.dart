@@ -10,6 +10,7 @@ import 'package:flutter_live_chat_app/services/fake_auth_service.dart';
 import 'package:flutter_live_chat_app/services/firebase_auth_service.dart';
 import 'package:flutter_live_chat_app/services/firebase_storage_service.dart';
 import 'package:flutter_live_chat_app/services/firestore_db_service.dart';
+import 'package:flutter_live_chat_app/services/notification_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 enum AppMode { DEBUG, RELEASE }
@@ -18,11 +19,13 @@ class UserRepository implements AuthBase {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FakeAuthService _fakeAuthService = locator<FakeAuthService>();
   FirestoreDBService _firestoreDBService = locator<FirestoreDBService>();
+  NotificationService _notificationService = locator<NotificationService>();
   FirebaseStorageService _firebaseStorageService =
       locator<FirebaseStorageService>();
 
   AppMode appMode = AppMode.RELEASE;
   List<UserModel> allUsersList = [];
+  Map<String, dynamic> _userToken = Map<String, dynamic>();
 
   @override
   Future<UserModel> currentUser() async {
@@ -30,7 +33,10 @@ class UserRepository implements AuthBase {
       return await _fakeAuthService.currentUser();
     } else {
       UserModel _userModel = await _firebaseAuthService.currentUser();
-      return await _firestoreDBService.readUser(_userModel.userID);
+      if (_userModel != null)
+        return await _firestoreDBService.readUser(_userModel.userID);
+      else
+        return null;
     }
   }
 
@@ -132,11 +138,27 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Future<bool> sendMessage(MessageModel sendingMessage) async {
+  Future<bool> sendMessage(
+      MessageModel sendingMessage, UserModel currentUser) async {
     if (appMode == AppMode.DEBUG) {
       return true;
     } else {
-      await _firestoreDBService.saveMessage(sendingMessage);
+      var _writePrcs = await _firestoreDBService.saveMessage(sendingMessage);
+      if (_writePrcs) {
+        var _token = "";
+        if (_userToken.containsKey(sendingMessage.toWho)) {
+          _token = _userToken[sendingMessage.toWho];
+          print("Token lokalden geldi.");
+        } else {
+          _token = await _firestoreDBService.getUserToken(sendingMessage.toWho);
+          _userToken[sendingMessage.toWho] = _token;
+          
+          print("Token  veritabanından geldi.");
+        }
+
+        await _notificationService.sendNotification(
+            sendingMessage, currentUser, _token);
+      }
       return true;
     }
   }

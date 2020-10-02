@@ -75,7 +75,7 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
 
     if (_userViewModel.userModel != null) {
       Future.delayed(Duration(milliseconds: 1), () {
-        Navigator.of(context).pop();
+        Navigator.of(context).popUntil(ModalRoute.withName("/"));
       });
     }
 

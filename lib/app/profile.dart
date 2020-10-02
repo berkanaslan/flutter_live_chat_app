@@ -36,10 +36,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         elevation: 0,
         title: Text(
           "Profil",
+          style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFFF2F6FA),
+          ),
         ),
         actions: [
           FlatButton(

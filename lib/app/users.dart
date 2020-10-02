@@ -23,10 +23,15 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0x91adc7),
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        title: Text("Kullanıcılar"),
+        title: Text(
+          "Kullanıcılar",
+          style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFFF2F6FA),
+          ),
+        ),
       ),
       body: Consumer<AllUsersViewModel>(
         builder: (context, model, child) {
@@ -110,7 +115,10 @@ class _UsersPageState extends State<UsersPage> {
       leading: CircleAvatar(
         backgroundImage: NetworkImage(_currentUser.profilePhotoUrl),
       ),
-      title: Text("@" + _currentUser.userName),
+      title: Text(
+        "@" + _currentUser.userName,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       subtitle: Text(_currentUser.mail),
       onTap: () {
         Navigator.of(context, rootNavigator: true).push(

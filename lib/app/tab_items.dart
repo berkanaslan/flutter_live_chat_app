@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-enum TabItem { AllUsers, ChatHistory, Profile }
+enum TabItem { ChatHistory, AllUsers, Profile }
 
 class TabItemData {
   final String titleText;
@@ -10,8 +10,8 @@ class TabItemData {
   TabItemData(this.titleText, this.icon);
 
   static Map<TabItem, TabItemData> allTabs = {
-    TabItem.AllUsers: TabItemData("Kulanıcılar", Icons.people),
     TabItem.ChatHistory: TabItemData("Sohbetlerim", Icons.message),
+    TabItem.AllUsers: TabItemData("Kulanıcılar", Icons.people),
     TabItem.Profile: TabItemData("Profil", Icons.person),
   };
 }
