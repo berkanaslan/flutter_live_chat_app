@@ -24,7 +24,7 @@ class UserModel {
       'userName': userName ??
           mail.substring(0, mail.indexOf('@')) + buildRandomUserNameID(),
       'profilePhotoUrl': profilePhotoUrl ??
-          'https://firebasestorage.googleapis.com/v0/b/flutter-live-chat-2020.appspot.com/o/images%2FdefaultUserPhoto.jpg?alt=media&token=548a3061-b001-4f48-a047-f7e2fe361d00',
+          'https://firebasestorage.googleapis.com/v0/b/flutter-live-chat-2020.appspot.com/o/images%2FdefaultUserPhoto.jpg?alt=media&token=fc1dcf75-1776-404a-a29c-4f7d71f17147',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'updatedAt': updatedAt ?? FieldValue.serverTimestamp(),
       'level': level ?? 1,
