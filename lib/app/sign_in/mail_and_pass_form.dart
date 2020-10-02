@@ -81,10 +81,12 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
         title: Text(
           _buttonText,
+          style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFFF2F6FA),
+          ),
         ),
       ),
       body: _userViewModel.state == ViewState.Idle
