@@ -44,15 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
             color: Color(0xFFF2F6FA),
           ),
         ),
-        actions: [
-          FlatButton(
-            child: Text(
-              "Çıkış yap",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => _buildSignOutAlertDialog(context),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -63,16 +54,13 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Center(
                   child: GestureDetector(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(80.0),
-                      child: FadeInImage.assetNetwork(
-                        placeholder: "assets/images/defaultUserPhoto.jpg",
-                        image: _userViewModel.userModel.profilePhotoUrl,
-                        fit: BoxFit.cover,
-                        height: 160,
-                        width: 160,
-                        repeat: ImageRepeat.noRepeat,
-                      ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      radius: 75,
+                      backgroundImage: _profilePhoto == null
+                          ? NetworkImage(
+                              _userViewModel.userModel.profilePhotoUrl)
+                          : FileImage(_profilePhoto),
                     ),
                     onTap: () => _showBottomSheet(context),
                   ),
@@ -114,6 +102,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     _savedUserName(context);
                     _updateProfilePhoto(context);
+                  },
+                ),
+                SocialLogInButton(
+                  buttonText: "Çıkış yap",
+                  buttonTextColor: Colors.white,
+                  buttonBgColor: Colors.red[800],
+                  borderColor: Colors.red[800],
+                  onPressed: () {
+                    _buildSignOutAlertDialog(context);
                   },
                 ),
               ],

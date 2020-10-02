@@ -6,6 +6,7 @@ class SocialLogInButton extends StatelessWidget {
   final Color buttonBgColor;
   final Widget buttonIcon;
   final VoidCallback onPressed;
+  final Color borderColor;
 
   const SocialLogInButton(
       {Key key,
@@ -13,6 +14,7 @@ class SocialLogInButton extends StatelessWidget {
       this.buttonTextColor: Colors.white,
       this.buttonBgColor: Colors.indigoAccent,
       this.buttonIcon,
+      this.borderColor,
       this.onPressed})
       : assert(buttonText != null),
         super(key: key);
@@ -53,7 +55,7 @@ class SocialLogInButton extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             width: 1.5,
-            color: Theme.of(context).primaryColor,
+            color: borderColor == null ?  Theme.of(context).primaryColor : borderColor,
           ),
           borderRadius: BorderRadius.all(
             Radius.circular(5.0),
