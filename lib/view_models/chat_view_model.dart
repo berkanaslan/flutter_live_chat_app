@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_live_chat_app/locator.dart';
 import 'package:flutter_live_chat_app/models/message_model.dart';
@@ -41,8 +42,7 @@ class ChatViewModel with ChangeNotifier {
     getMessagesWithPagination(false);
   }
 
-  Future<bool> sendMessage(
-      MessageModel sendingMessage, UserModel z) async {
+  Future<bool> sendMessage(MessageModel sendingMessage, UserModel z) async {
     return await _userRepository.sendMessage(sendingMessage, currentUser);
   }
 
@@ -98,5 +98,82 @@ class ChatViewModel with ChangeNotifier {
         state = ChatViewState.Loaded;
       }
     });
+  }
+
+  String formatDateyMd(Timestamp dateOrg) {
+    DateTime tm = dateOrg.toDate();
+
+    DateTime today = new DateTime.now();
+    Duration oneDay = new Duration(days: 1);
+    Duration twoDay = new Duration(days: 2);
+    Duration oneWeek = new Duration(days: 7);
+    String month;
+    switch (tm.month) {
+      case 1:
+        month = "OCAK";
+        break;
+      case 2:
+        month = "ŞUBAT";
+        break;
+      case 3:
+        month = "MART";
+        break;
+      case 4:
+        month = "NİSAN";
+        break;
+      case 5:
+        month = "MAYIS";
+        break;
+      case 6:
+        month = "HAZİRAN";
+        break;
+      case 7:
+        month = "TEMMUZ";
+        break;
+      case 8:
+        month = "AĞUSTOS";
+        break;
+      case 9:
+        month = "EYLÜL";
+        break;
+      case 10:
+        month = "EKİM";
+        break;
+      case 11:
+        month = "KASIM";
+        break;
+      case 12:
+        month = "ARALIK";
+        break;
+    }
+
+    Duration difference = today.difference(tm);
+
+    if (difference.compareTo(oneDay) < 1) {
+      return "BUGÜN";
+    } else if (difference.compareTo(twoDay) < 1) {
+      return "DÜN";
+    } else if (difference.compareTo(oneWeek) < 1) {
+      switch (tm.weekday) {
+        case 1:
+          return "PAZARTESİ";
+        case 2:
+          return "SALI";
+        case 3:
+          return "ÇARŞAMBA";
+        case 4:
+          return "PERŞEMBE";
+        case 5:
+          return "CUMA";
+        case 6:
+          return "CUMARTESİ";
+        case 7:
+          return "PAZAR";
+      }
+    } else if (tm.year == today.year) {
+      return '${tm.day} $month';
+    } else {
+      return '${tm.day} $month ${tm.year}';
+    }
   }
 }

@@ -112,14 +112,22 @@ class _UsersPageState extends State<UsersPage> {
     }
 
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(_currentUser.profilePhotoUrl),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(24.0),
+        child: FadeInImage.assetNetwork(
+          placeholder: "assets/images/defaultUserPhoto.jpg",
+          image: _currentUser.profilePhotoUrl,
+          fit: BoxFit.cover,
+          height: 48,
+          width: 48,
+          repeat: ImageRepeat.noRepeat,
+        ),
       ),
       title: Text(
         "@" + _currentUser.userName,
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
-      subtitle: Text(_currentUser.mail),
+      subtitle: Text(_currentUser.mail, style: TextStyle(fontSize: 13),),
       onTap: () {
         Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(

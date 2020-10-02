@@ -46,7 +46,7 @@ class FirestoreDBService implements DBBase {
     }
   }
 
-  updateProfilePhoto(String userID, String profilePhotoUrl) async {
+ Future<bool> updateProfilePhoto(String userID, String profilePhotoUrl) async {
     await _firestore
         .collection('users')
         .doc(userID)
@@ -74,6 +74,7 @@ class FirestoreDBService implements DBBase {
         .collection("chats")
         .doc(docID)
         .collection("messages")
+        .where("chatOwner", isEqualTo: currentUserID)
         .orderBy("date", descending: true)
         .limit(1)
         .snapshots();

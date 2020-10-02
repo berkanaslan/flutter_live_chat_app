@@ -63,13 +63,16 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Center(
                   child: GestureDetector(
-                    child: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      radius: 75,
-                      backgroundImage: _profilePhoto == null
-                          ? NetworkImage(
-                              _userViewModel.userModel.profilePhotoUrl)
-                          : FileImage(_profilePhoto),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(80.0),
+                      child: FadeInImage.assetNetwork(
+                        placeholder: "assets/images/defaultUserPhoto.jpg",
+                        image: _userViewModel.userModel.profilePhotoUrl,
+                        fit: BoxFit.cover,
+                        height: 160,
+                        width: 160,
+                        repeat: ImageRepeat.noRepeat,
+                      ),
                     ),
                     onTap: () => _showBottomSheet(context),
                   ),

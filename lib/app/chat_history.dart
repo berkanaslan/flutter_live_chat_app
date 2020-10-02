@@ -37,9 +37,15 @@ class _ChatHistoryState extends State<ChatHistory> {
                     itemCount: future.data.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            future.data[index].chatUserProfilePhotoUrl,
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(24.0),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: "assets/images/defaultUserPhoto.jpg",
+                            image: future.data[index].chatUserProfilePhotoUrl,
+                            fit: BoxFit.cover,
+                            height: 48,
+                            width: 48,
+                            repeat: ImageRepeat.noRepeat,
                           ),
                         ),
                         title: Text(
@@ -48,10 +54,16 @@ class _ChatHistoryState extends State<ChatHistory> {
                               fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         subtitle: future.data[index].lastMessage.length > 25
-                            ? Text(future.data[index].lastMessage
-                                    .substring(0, 25) +
-                                "...")
-                            : Text(future.data[index].lastMessage),
+                            ? Text(
+                                future.data[index].lastMessage
+                                        .substring(0, 25) +
+                                    "...",
+                                style: TextStyle(fontSize: 13),
+                              )
+                            : Text(
+                                future.data[index].lastMessage,
+                                style: TextStyle(fontSize: 13),
+                              ),
                         trailing: Text(future.data[index].timeDifference),
                         onTap: () {
                           Navigator.of(context, rootNavigator: true).push(

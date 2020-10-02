@@ -94,19 +94,61 @@ class _ChatPageState extends State<ChatPage> {
     return Consumer<ChatViewModel>(builder: (context, model, child) {
       return Expanded(
         child: ListView.builder(
-          reverse: true,
-          controller: _scrollController,
-          itemCount: model.hasMore
-              ? model.allMessages.length + 1
-              : model.allMessages.length,
-          itemBuilder: (context, index) {
-            if (model.hasMore && model.allMessages.length == index) {
-              return _buildOldMessagesCircularProgressIndicator();
-            } else {
-              return _buildMessageBalloon(model.allMessages[index]);
-            }
-          },
-        ),
+            reverse: true,
+            controller: _scrollController,
+            itemCount: model.hasMore
+                ? model.allMessages.length + 1
+                : model.allMessages.length,
+            itemBuilder: (context, index) {
+              if (model.hasMore && model.allMessages.length == index) {
+                return _buildOldMessagesCircularProgressIndicator();
+              } else {
+                if ((model.allMessages.length - 1) == index) {
+                  var _dateyMd =
+                      model.formatDateyMd(model.allMessages.last.date);
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8),
+                        child: Bubble(
+                          alignment: Alignment.center,
+                          color: Color.fromRGBO(212, 234, 244, 1.0),
+                          child: Text(_dateyMd.toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 10.0)),
+                        ),
+                      ),
+                      _buildMessageBalloon(model.allMessages.last),
+                    ],
+                  );
+                } else {
+                  var _dateyMd =
+                      model.formatDateyMd(model.allMessages[index].date);
+                  var _prevDateyMd =
+                      model.formatDateyMd(model.allMessages[index + 1].date);
+
+                  if (_dateyMd == _prevDateyMd) {
+                    return _buildMessageBalloon(model.allMessages[index]);
+                  } else {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Bubble(
+                            alignment: Alignment.center,
+                            color: Color.fromRGBO(212, 234, 244, 1.0),
+                            child: Text(_dateyMd.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 10.0)),
+                          ),
+                        ),
+                        _buildMessageBalloon(model.allMessages[index]),
+                      ],
+                    );
+                  }
+                }
+              }
+            }),
       );
     });
   }
@@ -193,7 +235,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Text(
                   currentMessage.message,
                   textAlign: TextAlign.right,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
                 ),
               ),
               Padding(
@@ -201,7 +243,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Text(
                   _dateHm.toString(),
                   textAlign: TextAlign.right,
-                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
                 ),
               ),
             ],
@@ -218,7 +260,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Text(
                   currentMessage.message,
                   textAlign: TextAlign.right,
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.black, fontSize: 13),
                 ),
               ),
               Padding(
@@ -226,7 +268,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: Text(
                   _dateHm.toString(),
                   textAlign: TextAlign.right,
-                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
                 ),
               ),
             ],
