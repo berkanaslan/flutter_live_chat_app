@@ -2,7 +2,7 @@
 
 Bu uygulama, sisteme kayıt olan tüm kullanıcıları listeleyerek, listedeki kullanıcıların birbiri ile anlık mesajlaşmasını sağlar.
 
-Release APK için bu bağlantıyı kullanın: 
+Release APK için bu bağlantıyı kullanın: https://github.com/berkanaslan/flutter_live_chat_app/releases/download/v1.1.0/app-armeabi-v7a-release.apk
 
 ## Neler var?
 
