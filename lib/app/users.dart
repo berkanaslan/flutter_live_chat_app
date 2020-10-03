@@ -36,9 +36,7 @@ class _UsersPageState extends State<UsersPage> {
       body: Consumer<AllUsersViewModel>(
         builder: (context, model, child) {
           if (model.state == AllUsersViewState.Busy) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return _buildNewUsersCircularProgressIndicator();
           } else if (model.state == AllUsersViewState.Loaded) {
             return RefreshIndicator(
               onRefresh: model.listRefresh,
@@ -127,7 +125,10 @@ class _UsersPageState extends State<UsersPage> {
         "@" + _currentUser.userName,
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
-      subtitle: Text(_currentUser.mail, style: TextStyle(fontSize: 13),),
+      subtitle: Text(
+        _currentUser.mail,
+        style: TextStyle(fontSize: 13),
+      ),
       onTap: () {
         Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
@@ -153,10 +154,17 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Widget _buildNewUsersCircularProgressIndicator() {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Center(
-        child: CircularProgressIndicator(),
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            height: 10,
+          ),
+          Text("Kullanıcılar getiriliyor."),
+        ],
       ),
     );
   }

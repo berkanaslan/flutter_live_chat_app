@@ -122,7 +122,17 @@ class _ChatHistoryState extends State<ChatHistory> {
             }
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text("Mesaj geçmişi getiriliyor"),
+                ],
+              ),
             );
           }
         },

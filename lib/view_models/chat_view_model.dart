@@ -175,5 +175,7 @@ class ChatViewModel with ChangeNotifier {
     } else {
       return '${tm.day} $month ${tm.year}';
     }
+
+    return '${tm.day} $month ${tm.year}';
   }
 }

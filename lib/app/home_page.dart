@@ -60,7 +60,6 @@ class _HomePageState extends State<HomePage> {
                   .currentState
                   .popUntil((route) => route.isFirst);
             }
-
             setState(() {
               _currentTab = selectedTab;
             });

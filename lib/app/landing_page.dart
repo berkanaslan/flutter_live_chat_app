@@ -20,7 +20,12 @@ class LandingPage extends StatelessWidget {
     } else {
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Container(
+            child: Image.asset(
+              "assets/images/logo.png",
+              width: (MediaQuery.of(context).size.width) * 2 / 3,
+            ),
+          ),
         ),
       );
     }
