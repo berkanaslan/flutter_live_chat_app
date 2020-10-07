@@ -239,7 +239,7 @@ class FirestoreDBService implements DBBase {
     return _allMessages;
   }
 
-  getUserToken(String toWho) async {
+  Future<String> getUserToken(String toWho) async {
     DocumentSnapshot _doc = await _firestore.doc("tokens/" + toWho).get();
     if (_doc != null) {
       Map<String, dynamic> _data = _doc.data();
@@ -247,5 +247,12 @@ class FirestoreDBService implements DBBase {
     } else {
       return null;
     }
+  }
+
+  Future<String> getFirebaseNotificationKey() async {
+    QuerySnapshot _snapshot = await _firestore.collection("firebaseKey").get();
+    DocumentSnapshot _doc = _snapshot.docs.last;
+    Map<String, dynamic> _key = _doc.data();
+    return _key["key"];
   }
 }
