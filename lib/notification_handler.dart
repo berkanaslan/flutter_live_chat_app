@@ -40,7 +40,7 @@ class NotificationHandler {
   initializeFCMNotification(BuildContext context) async {
     myContext = context;
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+        AndroidInitializationSettings('@drawable/ic_stat_message');
     var initializationSettingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     var initializationSettings = InitializationSettings(
