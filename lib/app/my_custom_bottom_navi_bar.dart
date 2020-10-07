@@ -20,6 +20,7 @@ class MyCustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
+        backgroundColor: Theme.of(context).canvasColor,
         items: [
           _createNavItem(TabItem.ChatHistory),
           _createNavItem(TabItem.AllUsers),

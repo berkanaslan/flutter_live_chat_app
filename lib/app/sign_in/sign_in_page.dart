@@ -14,7 +14,7 @@ class SignInPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).canvasColor,
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
