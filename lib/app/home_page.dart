@@ -59,10 +59,11 @@ class _HomePageState extends State<HomePage> {
               navigatorKeys[selectedTab]
                   .currentState
                   .popUntil((route) => route.isFirst);
+            } else {
+              setState(() {
+                _currentTab = selectedTab;
+              });
             }
-            setState(() {
-              _currentTab = selectedTab;
-            });
           },
         ),
       ),
