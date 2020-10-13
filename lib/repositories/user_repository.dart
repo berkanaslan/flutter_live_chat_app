@@ -152,7 +152,7 @@ class UserRepository implements AuthBase {
         } else {
           _token = await _firestoreDBService.getUserToken(sendingMessage.toWho);
           _userToken[sendingMessage.toWho] = _token;
-          
+
           print("Token  veritabanından geldi.");
         }
 
@@ -246,6 +246,14 @@ class UserRepository implements AuthBase {
     } else {
       return await _firestoreDBService.getMessagesWithPagination(
           currentUserID, chatUserID, lastCalledMessage, itemsPerPage);
+    }
+  }
+
+  Future<void> resetPassword(String mail) {
+    if (appMode == AppMode.DEBUG) {
+      return null;
+    } else {
+      return _firebaseAuthService.resetPassword(mail);
     }
   }
 }

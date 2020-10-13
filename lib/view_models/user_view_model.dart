@@ -16,6 +16,7 @@ class UserViewModel with ChangeNotifier implements AuthBase {
   UserModel _userModel;
   String mailErrorMessage;
   String passErrorMessage;
+  String mailErrorMessageForReset;
 
   UserModel get userModel => _userModel;
   ViewState get state => _state;
@@ -105,6 +106,17 @@ class UserViewModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<void> resetPassword(String mail) async {
+    if (_mailCheck(mail)) {
+      state = ViewState.Busy;
+      try {
+        await _userRepository.resetPassword(mail);
+      } finally {
+        state = ViewState.Idle;
+      }
+    }
+  }
+
   @override
   Future<UserModel> signInWithMailAndPass(String mail, String pass) async {
     if (_mailAndPassControl(mail, pass)) {
@@ -118,6 +130,17 @@ class UserViewModel with ChangeNotifier implements AuthBase {
     } else {
       return null;
     }
+  }
+
+  bool _mailCheck(String mail) {
+    var result = true;
+    if (!mail.contains('@')) {
+      mailErrorMessageForReset = "Lütfen geçerli bir e-posta adresi giriniz.";
+      result = false;
+    } else {
+      mailErrorMessageForReset = null;
+    }
+    return result;
   }
 
   bool _mailAndPassControl(String mail, String pass) {
@@ -155,7 +178,6 @@ class UserViewModel with ChangeNotifier implements AuthBase {
       String currentUserID, String chatUserID) {
     return _userRepository.getMessages(currentUserID, chatUserID);
   }
-
 
   Future<List<ChatModel>> getAllConversations(String userID) {
     return _userRepository.getAllConversations(userID);

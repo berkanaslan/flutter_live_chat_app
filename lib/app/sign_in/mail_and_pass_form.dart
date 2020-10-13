@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_live_chat_app/app/errors_exception.dart';
+import 'package:flutter_live_chat_app/app/sign_in/reset_password.dart';
 import 'package:flutter_live_chat_app/common_widgets/platform_alert_dialog.dart';
 import 'package:flutter_live_chat_app/common_widgets/sign_in_text_form_field.dart';
 import 'package:flutter_live_chat_app/common_widgets/social_log_in_button.dart';
@@ -30,6 +31,7 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
   }
 
   _formSubmit() async {
+    setState(() {});
     _formKey.currentState.save();
     final _userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
@@ -163,7 +165,8 @@ class _MailAndPassFormState extends State<MailAndPassForm> {
                                     color: Theme.of(context).primaryColor),
                               ),
                               onTap: () {
-                                print("Forgot pass codes");
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => ResetPassword()));
                               },
                             ),
                           ),

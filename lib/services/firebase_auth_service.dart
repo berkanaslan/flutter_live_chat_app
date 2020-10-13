@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class FirebaseAuthService implements AuthBase {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  UserModel _userFromFirebase(User user)  {
+  UserModel _userFromFirebase(User user) {
     if (user == null) {
       return null;
     } else {
@@ -17,7 +17,7 @@ class FirebaseAuthService implements AuthBase {
   @override
   Future<UserModel> currentUser() async {
     try {
-      User user = await Future.value(_firebaseAuth.currentUser); 
+      User user = await Future.value(_firebaseAuth.currentUser);
       return _userFromFirebase(user);
     } catch (e) {
       print("FirebaseAuthService currentUser() hatası: " + e.toString());
@@ -88,5 +88,9 @@ class FirebaseAuthService implements AuthBase {
     UserCredential userCredential = await _firebaseAuth
         .signInWithEmailAndPassword(email: mail, password: pass);
     return _userFromFirebase(userCredential.user);
+  }
+
+ Future<void> resetPassword(String mail) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: mail);
   }
 }
