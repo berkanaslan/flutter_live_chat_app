@@ -156,65 +156,71 @@ class _ChatPageState extends State<ChatPage> {
   Widget buildMessageInputArea() {
     final _chatViewModel = Provider.of<ChatViewModel>(context);
 
-    return Container(
-      padding: EdgeInsets.only(bottom: 8, left: 8),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              cursorColor: Theme.of(context).primaryColor,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                fillColor: Colors.white,
-                filled: true,
-                hintText: "Bir mesaj yazın",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide.none,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 100,
+        padding: EdgeInsets.only(bottom: 0, left: 0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                keyboardType: TextInputType.multiline,
+                minLines: 4,
+                maxLines: null,
+                controller: _messageController,
+                cursorColor: Theme.of(context).primaryColor,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  filled: true,
+                  hintText: "Bir mesaj yazın",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            height: 48,
-            margin: EdgeInsets.symmetric(horizontal: 4),
-            child: IconButton(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              icon: Icon(
-                Icons.send,
-                size: 24,
-                color: Color(0xFF414651),
-              ),
-              onPressed: () async {
-                if (_messageController.text.trim().length > 0) {
-                  MessageModel _sendingMessage = MessageModel(
-                    fromWho: _chatViewModel.currentUser.userID,
-                    toWho: _chatViewModel.chatUser.userID,
-                    isFromMe: true,
-                    message: _messageController.text,
-                    chatOwner: _chatViewModel.currentUser.userID 
-                  );
+            Container(
+              height: 48,
+              margin: EdgeInsets.symmetric(horizontal: 4),
+              child: IconButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                icon: Icon(
+                  Icons.send,
+                  size: 24,
+                  color: Color(0xFF414651),
+                ),
+                onPressed: () async {
+                  if (_messageController.text.trim().length > 0) {
+                    MessageModel _sendingMessage = MessageModel(
+                        fromWho: _chatViewModel.currentUser.userID,
+                        toWho: _chatViewModel.chatUser.userID,
+                        isFromMe: true,
+                        message: _messageController.text,
+                        chatOwner: _chatViewModel.currentUser.userID);
 
-                  _messageController.clear();
+                    _messageController.clear();
 
-                  var _result = await _chatViewModel.sendMessage(
-                      _sendingMessage, _chatViewModel.currentUser);
+                    var _result = await _chatViewModel.sendMessage(
+                        _sendingMessage, _chatViewModel.currentUser);
 
-                  if (_result) {
-                    _scrollController.animateTo(0,
-                        duration: Duration(milliseconds: 50),
-                        curve: Curves.easeInCubic);
+                    if (_result) {
+                      _scrollController.animateTo(0,
+                          duration: Duration(milliseconds: 50),
+                          curve: Curves.easeInCubic);
+                    }
                   }
-                }
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
