@@ -107,8 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 SocialLogInButton(
                   buttonText: "Çıkış yap",
                   buttonTextColor: Colors.white,
-                  buttonBgColor: Colors.red[800],
-                  borderColor: Colors.red[800],
+                  buttonBgColor: Colors.redAccent,
+                  borderColor: Colors.redAccent,
                   onPressed: () {
                     _buildSignOutAlertDialog(context);
                   },
