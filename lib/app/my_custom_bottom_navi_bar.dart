@@ -25,7 +25,7 @@ class MyCustomBottomNavigationBar extends StatelessWidget {
           _createNavItem(TabItem.ChatHistory),
           _createNavItem(TabItem.AllUsers),
           _createNavItem(TabItem.Profile),
-        ],
+        ], 
         onTap: (index) => onSelectedTab(TabItem.values[index]),
       ),
       tabBuilder: (context, index) {
@@ -45,7 +45,7 @@ class MyCustomBottomNavigationBar extends StatelessWidget {
 
     return BottomNavigationBarItem(
       icon: Icon(buildTab.icon),
-      title: Text(buildTab.titleText),
+      label: buildTab.titleText,  
     );
   }
 }
