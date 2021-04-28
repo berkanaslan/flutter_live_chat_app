@@ -145,7 +145,7 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   getMoreUsers() async {
-    final _allUsersViewModel = Provider.of<AllUsersViewModel>(context);
+    final _allUsersViewModel = Provider.of<AllUsersViewModel>(context, listen: false);
     if (_isLoading == false) {
       _isLoading = true;
       await _allUsersViewModel.getMoreUsers();
